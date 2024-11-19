@@ -1,0 +1,38 @@
+use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Working datset/nhis_first_working.dta"
+
+
+describe, detail
+
+
+misstable summarize 
+
+
+
+// just to double check all missing data
+foreach var of varlist * {
+    display "`var'" //open and close local macro `var'
+    quietly count if missing(`var') // quietly suppresses all terminal output for the duration of command. It is useful both interactively and in programs.
+    scalar missing = r(N) //scalar
+    display  "Missing:" missing 
+}
+
+
+
+
+* Open the file to write the descriptions
+file open myfile using "nhis_first_working_description.txt", write replace
+
+* Write the header in the file
+file write myfile "Variable Descriptions:\n\n"
+
+
+
+gen missing_var = 0
+
+
+* I could techncally use drop but I dont like changing the original data for saftly concern despite keeping a copy of the original data
+* Loop through all variables in the dataset
+foreach var of varlist * {
+    * If the value in the current variable is missing, set missing_var to 1 for that row 
+    replace missing_var = 1 if missing(`var')
+}
