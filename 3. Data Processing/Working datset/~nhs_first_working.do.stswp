@@ -201,7 +201,8 @@ gen copy_earnings = earnings_average
 
 mi set mlong
 mi register imputed copy_dvint earnings
-mi impute mlogit  copy_dvint copy_earnings = other_variables, add(5)
+mi impute mlogit copy_dvint = copy_earnings , add(5)
+mi impute mlogit copy_earnings = copy_int  , add(5)
 
 
 
