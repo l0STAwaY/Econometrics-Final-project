@@ -70,25 +70,6 @@ describe
 
 
 
-* Open the file to write the descriptions
-file open myfile using "nhis_first_working_description.txt", write replace
-
-* Write the header in the file
-file write myfile "Variable Descriptions:\n\n"
-
-
-
-//the reason w droped 2019 is becuase
-
-
-
-* I could techncally use drop but I dont like changing the original data for saftly concern despite keeping a copy of the original data
-* Loop through all variables in the dataset
-foreach var of varlist * {
-    * If the value in the current variable is missing, set missing_var to 1 for that row 
-    replace missing_var = 1 if missing(`var')
-}
-
 
 // drop if dvint ==  000
 
@@ -116,6 +97,11 @@ tabulate hospnght
 
 tabulate dvint if year == 2016 | year ==2017 |year== 2018
 
+
+
+
+
+//--------------------Average is no longer needed--------------------------------------//
 
 * There is hald the data un recorded which imputating on those data would in fact reduce the variablility.
 * Create a new variable with numeric values
@@ -148,12 +134,7 @@ corr dvint_average earnings_average
 
 //Medicare Part B of Original Medicare and Medicare Advantage (Part C) cover the costs of doctor visits
 
-// Part A covers mostly hospital utilization 
-
-
-
-
-							
+// Part A covers mostly hospital utilization 							
 							
 							
 gen earnings_average = 0
@@ -177,7 +158,7 @@ replace earnings_average = . if earnings== 97
 replace earnings_average = . if  earnings == 98 
 replace earnings_average = . if  earnings == 99
 
- 
+
 tabulate earnings
 tabulate earnings_average	
 
@@ -191,26 +172,103 @@ histogram dvint_average
 histogram earnings_average
 
 
-/// -----------Imputation--------------//
 
 
 
-gen copy_dvint = dvint_average
-gen copy_earnings = earnings_average
+
+
+/// -----------Imputation--------------  I need to rework the data since the prior process does not matter anymore//
+
+
+
+
+
+gen copy_dvint = dvint
+gen copy_earnings = earnings
+gen copy_heath = health
+
+count if missing(health==.)
+count if missing(age)
+count if dvint==997
+count if missing(age)
+
+mcartest copy_dvint copy_earnings health 
+
 
 
 mi set mlong
 mi register imputed copy_dvint earnings
-mi impute mlogit copy_dvint = copy_earnings , add(5)
-mi impute mlogit copy_earnings = copy_int  , add(5)
+mi impute mlogit copy_dvint = earnings , add(5)
+mi impute mlogit copy_earnings = dvint  , add(5)
+
+
+sum copy_earnings
+sum copy_dvint
+
+* Handle cases for missing or unrecognized categories
+replace copy_dvint = .  if dvint == 997  
+replace copy_dvint = .  if dvint == 998
+replace copy_dvint = .  if  dvint == 999 
+
+replace copy_earnings = . if earnings== 97 
+replace copy_earnings = . if  earnings == 98 
+replace copy_earnings = . if  earnings == 99
+
+
+misstable patterns
+
+sum copy_earnings
+sum copy_dvint
 
 
 
+
+
+//are there attrition bias//
 //  -----------------Model Design--------------------//
 
 
+global ylist copy_dvint
+global xlist copy_earnings
 
-regress dvint_average i.earnings_average health
+describe
+
+. ssc install estout, replace
+
+
+
+//Ordered logit model
+ologit $ylist $xlist, robust
+eststo ologit_dvint
+mlogit  $ylist $xlist, robust
+eststo mlogit_dvint
+lrtest mlogit_dvint ologit_dvint, force
+
+
+//maginal effect
+
+ologit $ylist $xlist, robust
+eststo ologit_dvint
+
+
+//mg all $xlist
+margins, dydx(*) atmeans
+
+
+
+mfx, predict(outcome(100))
+
+* Recode the categorical values in `dvint` into numeric values
+replace dvint_average = 0 if dvint == 100 //"never"  
+replace dvint_average = 0.25 if dvint == 203 //"under 6 months" 
+replace dvint_average = 0.75 if dvint ==  204 //"6 months to less than 12 months" 
+replace dvint_average = 1.5 if dvint == 302 //"1 year to less than 2 years" 
+replace dvint_average = 3.5 if dvint == 305 //"2 years to less than 5 years" 
+replace dvint_average = 5 if dvint == 400 //"5 years or more"  
+
+
+
+
 
 
 
@@ -232,12 +290,6 @@ xtologit dvint earnings, fe
 
 
 
-
-ologit dvint earnings, robust
-eststo ologit_dvint
-mlogit dvint earnings, robust
-eststo mlogit_dvint
-lrtest mlogit_dvint ologit_dvint, force
 
 
 
@@ -292,6 +344,8 @@ lrtest mlogit_dvint ologit_dvint, force
 corr delaycost ybarcare ybarmeds wormedbill hiprobpayr hiunablepay ydelaymedyr yskimpmedyr yskipmedyr
 
 
+
+ssc install feologit
 
 
 * Remember its invalid to simply to drop these varaibles as there may be missing data bias.  Drop? / Imputation?
