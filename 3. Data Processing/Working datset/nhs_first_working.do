@@ -1,34 +1,27 @@
-cd "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Working datset" 
-use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Working datset/nhis_first_working.dta"
+
+cd "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Original dataset" 
+use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Original dataset/nhis_first_original"
 
 
-describe
 
+// This is one way to output but its not stata jornal latex format so I don't know how to compile the out put so I just typed everything in latex instead
+// describe
+// sjlog using "nhis_first_original.dta"
+// misstable summarize
+// sjlog close
+// sjlog type nhis_first_original.dta.log.tex
+//
+//
 
-// report missing data
-
-// Reported hhweight, perweight, fweight, pooryn, earnings, and pclookhelyr.
-misstable summarize 
-
-
-tabulate age
-
-//Reported hhweight, fmx, px, perweight, fweight, pooryn, earnings, and pclookhelyr.      px and fm are label for identificaltion. That is labelwithin a family and person they do not need tobe data, 
-foreach var of varlist * {
-    display "`var'"  // Display the variable name
-    
-
-    * Count missing values
-    quietly count if missing(`var')  
-    display "Missing: " r(N)  // Display the count of missing values
-}
 
 
 
 **# Bookmark #6
 //-------------------Merge data----------------------//
 
-// checj the data before merging
+
+// we can do all this in the working data set now
+cd "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Working datset" 
 use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Working datset/HealthCon_additional.dta"
 use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Working datset/Medicaid_care_16_18"
 
@@ -36,7 +29,8 @@ describe
 // https://nhis.ipums.org/nhis/userNotes_links.shtml. adding new variables that I wanted to include this https://nhis.ipums.org/nhis/userNotes_links.shtml
 
 merge 1:1 year nhispid using "HealthCon_additional.dta"
-merge 1:1 year nhispid using "Medicaid_care_16_18", generate(_merge_MC1618)
+merge 1:1 year nhispid using "Medicaid_care_16_18.dta", generate(_merge_MC1618)
+merge 1:1 year nhispid using "Auxilarydata_001_original.dta", generate(_merge_aux001)
 
 
 
@@ -65,9 +59,98 @@ tabulate earnings
 //Drop a year value from 2019//
 drop if year == 2019
 
-
+misstable summarize 
 describe 
 
+
+
+
+
+
+
+//--------------------------Creating data table for original data----------------------------------//
+//---- output summary static and data desrption for the unmerged data------//
+
+ssc install estout
+ssc describe descsave
+
+
+//summary output
+
+eststo clear
+estpost summarize *
+esttab using "original_data_summary.txt", cells(" count() mean()  sd()  min()  max()") label replace
+
+// Desribe output
+descsave, saving("original_data_description.dta") 
+
+
+use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Original dataset/original_data_description.dta"
+//open and output the file
+outsheet using "original_data_description.txt", replace
+
+
+
+
+
+use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Original dataset/nhis_first_merged"
+
+
+
+
+
+descsave, saving("merged_data_description.dta") 
+
+
+
+
+//---- output for merged data------//
+
+use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Original dataset/nhis_fully_merged_original.dta"
+
+
+
+// summart
+eststo clear
+estpost summarize *
+esttab using "merged_data_summary.txt", cells(" count() mean()  sd()  min()  max()") label replace
+
+
+
+//describe
+
+descsave, saving("merged_data_description.dta") 
+
+use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Original dataset/merged_data_description.dta"
+
+outsheet using "merged_data_description.txt", replace
+
+
+
+
+
+
+
+
+//------------------------------Missing data----------------------------------//
+//Learning about missing data for merged and unmerged//
+
+mcartest copy_dvint copy_earnings copy_health sex age 
+
+
+misstable summarize
+
+tabulate age
+
+//Reported hhweight, fmx, px, perweight, fweight, pooryn, earnings, and pclookhelyr.      px and fm are label for identificaltion. That is labelwithin a family and person they do not need tobe data, 
+foreach var of varlist * {
+    display "`var'"  // Display the variable name
+    
+
+    * Count missing values
+    quietly count if missing(`var')  
+    display "Missing: " r(N)  // Display the count of missing values
+}
 
 
 
@@ -98,86 +181,18 @@ tabulate hospnght
 tabulate dvint if year == 2016 | year ==2017 |year== 2018
 
 
-
-
-
-//--------------------Average is no longer needed--------------------------------------//
-
-* There is hald the data un recorded which imputating on those data would in fact reduce the variablility.
-* Create a new variable with numeric values
-*this is the average of dvint
-gen dvint_average = 0
-
-* Recode the categorical values in `dvint` into numeric values
-replace dvint_average = 0 if dvint == 100 //"never"  
-replace dvint_average = 0.25 if dvint == 203 //"under 6 months" 
-replace dvint_average = 0.75 if dvint ==  204 //"6 months to less than 12 months" 
-replace dvint_average = 1.5 if dvint == 302 //"1 year to less than 2 years" 
-replace dvint_average = 3.5 if dvint == 305 //"2 years to less than 5 years" 
-replace dvint_average = 5 if dvint == 400 //"5 years or more"  
-
-
-* Handle cases for missing or unrecognized categories that are unknown and unrecorded
-replace dvint_average = .  if dvint == 997  
-replace dvint_average = .  if dvint == 998
-replace dvint_average = .  if  dvint == 999 
-							
-tabulate dvint_average 			
-tabulate dvint		
-							
-corr dvint_average earnings_average
-							
+//--------------------------------Check for missing data now that we dropped--------------------------------------------------//
 
 
 
 
+misstable summarize
 
-//Medicare Part B of Original Medicare and Medicare Advantage (Part C) cover the costs of doctor visits
-
-// Part A covers mostly hospital utilization 							
-							
-							
-gen earnings_average = 0
-
-
-* Assign calculated midpoints for each income category
-replace earnings_average = 2500 if earnings == 01  // $01 to $4999
-replace earnings_average = 7500 if earnings == 02  // $5000 to $9999
-replace earnings_average = 12500 if earnings == 03 // $10000 to $14999
-replace earnings_average = 17500 if earnings == 04 // $15000 to $19999
-replace earnings_average = 22500 if earnings == 05 // $20000 to $24999
-replace earnings_average = 30000 if earnings == 06 // $25000 to $34999
-replace earnings_average = 40000 if earnings == 07 // $35000 to $44999
-replace earnings_average = 50000 if earnings == 08 // $45000 to $54999
-replace earnings_average = 60000 if earnings  == 09 // $55000 to $64999
-replace earnings_average = 70000 if earnings == 10 // $65000 to $74999
-replace earnings_average = 75000 if earnings == 11 // $75000 and over (no upper bound)
-
-* Handle cases for missing or unrecognized categories
-replace earnings_average = . if earnings== 97 
-replace earnings_average = . if  earnings == 98 
-replace earnings_average = . if  earnings == 99
-
-
-tabulate earnings
-tabulate earnings_average	
-
-
-// use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Working datset/meps_00001.dta" 
-
-gen copy_dvint_average = dvint_average
-gen copy_earnings_average = earnings_average
-
-histogram dvint_average
-histogram earnings_average
+// there is no missing data left for both merged and original data since all missing are from 2019 but we still need to deal with NIU unkown cases where many could be treated as missing
 
 
 
-
-
-
-
-/// -----------Imputation--------------  I need to rework the data since the prior process does not matter anymore//
+///----------------------------Dealing with data that are Unkown or marked as unobserved------------------------------------------------//
 
 
 
@@ -185,15 +200,19 @@ histogram earnings_average
 
 gen copy_dvint = dvint
 gen copy_earnings = earnings
-
-mcartest copy_dvint copy_earnings health 
-
+gen copy_health = health
 
 
-mi set mlong
-mi register imputed copy_dvint earnings
-mi impute mlogit copy_dvint = earnings , add(5)
-mi impute mlogit copy_earnings = dvint  , add(5)
+count if age == 999
+
+summarize dvint
+summarize copy_dvint
+
+summarize earnings
+summarize copy_earnings
+
+summarize health
+summarize copy_health 
 
 
 sum copy_earnings
@@ -204,10 +223,46 @@ replace copy_dvint = .  if dvint == 997
 replace copy_dvint = .  if dvint == 998
 replace copy_dvint = .  if  dvint == 999 
 
+
+
 replace copy_earnings = . if earnings== 97 
 replace copy_earnings = . if  earnings == 98 
 replace copy_earnings = . if  earnings == 99
 
+
+
+replace copy_health = . if  health == 7
+replace copy_health  = . if  health == 8
+replace copy_health  = . if  health == 9
+
+
+
+//create missing data lable just in case
+gen missing_dvint = missing(copy_dvint)
+gen missing_earnings = missing(copy_earnings)
+gen missing_health = missing(copy_health)
+
+
+
+// analyse missing data
+
+
+
+//----------------------Data imputation using KNN------------------------------//
+
+// if the mcartest tell us we fail to reject null hypthesis that the data is MAC, we can say droping the variable would be ok since all missing data are purely random
+mcartest copy_dvint copy_earnings copy_health sex age 
+
+
+
+
+
+mi set mlong
+mi register imputed copy_dvint earnings
+mi impute mlogit copy_dvint = copy_earnings copy_health , add(5)
+mi impute mlogit copy_earnings = copy_dvint copy_health, add(5)
+
+mi impute mlogit copy_health = copy_earnings copy_dvint , add(5)
 
 misstable patterns
 
@@ -222,8 +277,8 @@ sum copy_dvint
 //  -----------------Model Design--------------------//
 
 
-global ylist dvint 
-global xlist earnings 
+global ylist copy_dvint
+global xlist copy_earnings copy_health age 
 
 describe
 
@@ -245,6 +300,11 @@ ologit $ylist $xlist, robust
 eststo ologit_dvint
 
 
+
+
+
+
+//
 //mg all $xlist
 margins, dydx(*) atmeans
 
@@ -252,37 +312,31 @@ margins, dydx(*) atmeans
 
 mfx, predict(outcome(100))
 
-* Recode the categorical values in `dvint` into numeric values
-replace dvint_average = 0 if dvint == 100 //"never"  
-replace dvint_average = 0.25 if dvint == 203 //"under 6 months" 
-replace dvint_average = 0.75 if dvint ==  204 //"6 months to less than 12 months" 
-replace dvint_average = 1.5 if dvint == 302 //"1 year to less than 2 years" 
-replace dvint_average = 3.5 if dvint == 305 //"2 years to less than 5 years" 
-replace dvint_average = 5 if dvint == 400 //"5 years or more"  
 
-
-
-
-
-
-
-twoway scatter dvint_average earnings_average
-							
-twoway scatter dvint_average earnings_average
-reg dvint_average earnings_average, robust
-
-describe
+// Fixed effect model ssc install feologit
 
 encode nhispid, gen(nhispid_num)
 
 
 xtset nhispid_num year
-xtologit dvint earnings, fe
+xtologit dvint earnings age health, fe robust
 
 
-. ssc install estout, replace
+* Run the Fixed Effects Ordered Logit Model
+feologit $ylist $xlist, i(nhispid_num) i(year) robust
 
 
+//iv
+xtivreg copy_dvint (copy_earnings = himedicaidyr) copy_health age, fe robust
+
+
+
+
+
+
+
+
+//---------------------------------------Unrealated test
 
 
 
@@ -333,13 +387,6 @@ xtologit dvint earnings, fe
 * What about a cost utility example.  does cost/utility effect the utilization of health care?  We don't have life expectancy we could devide this by the years of obervation to get average health of a individua across year, then we might be able use a dummy varaible to simulate treatment or not or utilization or not.  Another question arise, is three years of observation enoough to make meaningful conclusion?
 
 *-----------------------------
-
-
-corr delaycost ybarcare ybarmeds wormedbill hiprobpayr hiunablepay ydelaymedyr yskimpmedyr yskipmedyr
-
-
-
-ssc install feologit
 
 
 * Remember its invalid to simply to drop these varaibles as there may be missing data bias.  Drop? / Imputation?

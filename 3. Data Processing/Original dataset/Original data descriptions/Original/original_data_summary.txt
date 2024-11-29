@@ -1,0 +1,56 @@
+-------------------------------------------------------------------------------------
+                              (1)                                                    
+                                                                                     
+                            count         mean           sd          min          max
+-------------------------------------------------------------------------------------
+survey year                289322     2017.201     1.056791         2016         2019
+sequential serial ~h       289322     24643.88      15077.2            1        59230
+stratum for varian~n       289322     6128.439     2445.888          100         7151
+primary sampling u~        289322     32.16784     31.14104            1          164
+nhis unique identi~l            0            .            .            .            .
+household weight, ~l       248132     3428.071     1709.617          251        14110
+region of residence        289322     2.700593      1.02547            1            4
+person number with~s       289322     1.998344     1.283612            1           18
+nhis unique identi~n            0            .            .            .            .
+household number (~)            0            .            .            .            .
+family number (fro~)            0            .            .            .            .
+person number of r~o            0            .            .            .            .
+final basic annual~t       248132     3876.118     2024.852            0        20819
+sample person weight       289322     4444.373     6395.304            0       172845
+final annual famil~t       248132     3612.385     1829.594          243        18710
+sample adult flag          289322     1.436538      1.15573            0            5
+sample child flag          289322     .4277034     .9098624            0            5
+age                        289322     40.12035     28.42866            0          999
+sex                        289322     1.515917     .5007424            1            9
+self-reported race~m       289322     152.3667     128.9097          100          998
+u.s. citizenship           289322     1.978775     .5211694            1            9
+above or below pov~d       248132     1.684333      2.05062            1            9
+total combined fa~20       289322     25.79345     23.58933           10           99
+person's total ear~u       248132     12.78544     29.06625            0           99
+interval since las~t       289322     118.7868     128.8204            0          999
+was in a hospital ~p       289322      1.08926     .3954571            0            9
+number times in e~12       289322     7.380569     10.34078            0           99
+received home care~p       289322     .5879055     .7533286            0            9
+has usual place fo~e       289322     1.042005     1.049506            0            9
+kind of usual plac~        289322     62.57817      75.6222            0          999
+medical care delay~t       289322     1.074374     .3427949            1            9
+needed but couldn'~c       289322     1.056643     .3299302            1            9
+needed but couldn'~c       289322     .5864711     .6993822            0            9
+worried about payi~l       289322     1.088922      1.36856            0            9
+delayed filling pr~        289322     .3110202     .5138534            0            9
+took less medicati~n       289322     .2942604     .4983576            0            9
+skipped medication~e       289322      .293099     .4940156            0            9
+problems paying or~y       289322     1.167474     .5473214            1            9
+unable to pay medi~s       289322     .2447308     .7306257            0            9
+health insurance c~s       289322     1.155132     .7878861            1            9
+has state-sponsore~        289322     1.104524       .73841            1            9
+has medicare insur~e       289322     1.216879     .8229407            0            9
+type of medicare c~e       289322     .5890703     1.311144            0            9
+medicare part d            289322     .3576396     1.029698            0            9
+medicare coverage ~r       289322     .0408299     .3491638            0            9
+plan 1: paid for b~e       289322     .8322423     1.426958            0            9
+plan 2: paid for b~e       289322     .0278686     .2595756            0            9
+looked up health i~        248132     .5533144     .9254935            0            9
+-------------------------------------------------------------------------------------
+Observations               289322                                                    
+-------------------------------------------------------------------------------------
