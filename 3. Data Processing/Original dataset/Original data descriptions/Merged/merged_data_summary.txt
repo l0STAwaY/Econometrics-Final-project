@@ -51,7 +51,6 @@ medicare coverage ~r       289322     .0408299     .3491638            0        
 plan 1: paid for b~e       289322     .8322423     1.426958            0            9
 plan 2: paid for b~e       289322     .0278686     .2595756            0            9
 looked up health i~        248132     .5533144     .9254935            0            9
-missing_var                289322     .1423673     .3494271            0            1
 health status              248132     2.125518     1.062032            1            9
 Matching result fr~e       289322     2.715265     .6988542            1            3
 has medicaid insur~e       248132     1.214918     .8165612            1            9
@@ -65,6 +64,9 @@ educational attain~t       248132     253.8637     158.4083            0        
 employment status ~2       248132     119.8389     94.97011            0          999
 received income fr~b       248132     10.87902      7.36947           10           90
 ratio of family in~t       248132     35.00265     19.46543           11           99
+Matching result fr~e       289322     2.715265     .6988542            1            3
+covered by medicai~e       248132     1.240162     .8260888            1            9
+medicaid coverage ~e       248132     .0845397     .3324344            0            9
 Matching result fr~e       289322     2.715265     .6988542            1            3
 -------------------------------------------------------------------------------------
 Observations               289322                                                    

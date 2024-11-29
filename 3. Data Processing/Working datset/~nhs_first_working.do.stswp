@@ -25,12 +25,15 @@ cd "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/
 use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Working datset/HealthCon_additional.dta"
 use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Working datset/Medicaid_care_16_18"
 
-describe 
+drop missing_var
 // https://nhis.ipums.org/nhis/userNotes_links.shtml. adding new variables that I wanted to include this https://nhis.ipums.org/nhis/userNotes_links.shtml
 
+
+// merge for working data then I copy a sample to original merged data
 merge 1:1 year nhispid using "HealthCon_additional.dta"
 merge 1:1 year nhispid using "Medicaid_care_16_18.dta", generate(_merge_MC1618)
 merge 1:1 year nhispid using "Auxilarydata_001_original.dta", generate(_merge_aux001)
+merge 1:1 year nhispid using "Extra_medicaid_original.dta", generate(_merge_medicaid)
 
 
 
@@ -41,7 +44,7 @@ merge 1:1 year nhispid using "Auxilarydata_001_original.dta", generate(_merge_au
 
 //--------Now the data is fully merged------------//
 
-use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Working datset/nhis_fully_merge.dta"
+use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Working datset/nhis_fully_merged.dta"
 describe
 
 
@@ -50,7 +53,19 @@ describe
 // unrecorded. 
 // drop data NIU
 //289,322  --> 94,587     58 varaible
-drop if dvint == 0 | earnings == 0
+drop if dvint == 0 | earnings == 0 | educ == 0 | poverty == 98 | himedicaidyr == 0 |   gotwelf == 0 | wormedbill  == 0 
+
+count if himedicaidyr == 7 
+
+drop if mcareprob == 0 & age >= 65
+
+
+// Age sex and racenew   are in all data
+
+
+// himcaid is useless  since cetagory is  NIU, Not mentioned, Mentioned, Unknown-refused, Unknown-not ascertained, Unknown-don't know
+
+// no health bechase it dodesnt haven niu
 
 tabulate dvint
 tabulate earnings
@@ -68,6 +83,7 @@ describe
 
 
 
+**# Bookmark #2
 //--------------------------Creating data table for original data----------------------------------//
 //---- output summary static and data desrption for the unmerged data------//
 
@@ -93,7 +109,7 @@ outsheet using "original_data_description.txt", replace
 
 
 
-use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Original dataset/nhis_first_merged"
+use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Original dataset/nhis_first_original_merged"
 
 
 
@@ -103,14 +119,15 @@ descsave, saving("merged_data_description.dta")
 
 
 
+**# Bookmark #3
 
-//---- output for merged data------//
+//----------------------------------output for merged data--------------------------------------------//
 
 use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Original dataset/nhis_fully_merged_original.dta"
 
 
 
-// summart
+// summary
 eststo clear
 estpost summarize *
 esttab using "merged_data_summary.txt", cells(" count() mean()  sd()  min()  max()") label replace
@@ -126,17 +143,18 @@ use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing
 outsheet using "merged_data_description.txt", replace
 
 
+count if poverty == 99 | poverty ==98
 
 
 
 
 
 
-//------------------------------Missing data----------------------------------//
+**# Bookmark #4
+
+//------------------------------MISSING DATA---------------------------------//
 //Learning about missing data for merged and unmerged//
-
-mcartest copy_dvint copy_earnings copy_health sex age 
-
+use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Working datset/nhis_first_working.dta"   
 
 misstable summarize
 
@@ -192,55 +210,87 @@ misstable summarize
 
 
 
-///----------------------------Dealing with data that are Unkown or marked as unobserved------------------------------------------------//
+///----------------------------Dealing with data that are Unkown or marked as unobserved------------------------------------------------//describe
+use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Working datset/nhis_fully_merge.dta"     // The fully merged is the one that I am using
+describe
+
+gen impute_dvint = dvint
+gen impute_earnings = earnings
+gen impute_health = health
 
 
+gen impute_educ = educ
+gen impute_poverty = poverty
+gen impute_ = poverty
+gen i
 
 
-
-gen copy_dvint = dvint
-gen copy_earnings = earnings
-gen copy_health = health
 
 
 count if age == 999
 
 summarize dvint
-summarize copy_dvint
+summarize impute_dvint
 
 summarize earnings
-summarize copy_earnings
+summarize impute_earnings
 
 summarize health
-summarize copy_health 
+summarize impute_health 
 
 
-sum copy_earnings
-sum copy_dvint
+summarize educ
+summarize impute_educ
+
+summarize poverty
+summarize impute_poverty
+
+summarize himedicaidyr
+
+
+
+
+
 
 * Handle cases for missing or unrecognized categories
-replace copy_dvint = .  if dvint == 997  
-replace copy_dvint = .  if dvint == 998
-replace copy_dvint = .  if  dvint == 999 
+replace impute_dvint = .  if dvint == 997  
+replace impute_dvint = .  if dvint == 998
+replace impute_dvint = .  if  dvint == 999 
 
 
 
-replace copy_earnings = . if earnings== 97 
-replace copy_earnings = . if  earnings == 98 
-replace copy_earnings = . if  earnings == 99
+replace impute_earnings = . if earnings== 97 
+replace impute_earnings = . if  earnings == 98 
+replace impute_earnings = . if  earnings == 99
 
 
 
-replace copy_health = . if  health == 7
-replace copy_health  = . if  health == 8
-replace copy_health  = . if  health == 9
+replace impute_health = . if  health == 7
+replace impute_health  = . if  health == 8
+replace impute_health  = . if  health == 9
+
+
+
+
+replace impute_educ = . if  educ == 997
+replace impute_educ  = . if  educ == 998
+replace impute_educ  = . if  health == 999
+
+
+
+replace impute_poverty = . if  poverty == 99
+
+
 
 
 
 //create missing data lable just in case
-gen missing_dvint = missing(copy_dvint)
-gen missing_earnings = missing(copy_earnings)
-gen missing_health = missing(copy_health)
+gen missing_dvint = missing(impute_dvint)
+gen missing_earnings = missing(impute_earnings)
+gen missing_health = missing(impute_health)
+gen missing_educ = missing(impute_educ)
+
+
 
 
 
@@ -251,23 +301,55 @@ gen missing_health = missing(copy_health)
 //----------------------Data imputation using KNN------------------------------//
 
 // if the mcartest tell us we fail to reject null hypthesis that the data is MAC, we can say droping the variable would be ok since all missing data are purely random
-mcartest copy_dvint copy_earnings copy_health sex age 
+mcartest impute_dvint impute_earnings impute_health impute_poverty impute_educ sex age 
+
+
+// determine order of imputation //
+
+
 
 
 
 
 
 mi set mlong
-mi register imputed copy_dvint earnings
-mi impute mlogit copy_dvint = copy_earnings copy_health , add(5)
-mi impute mlogit copy_earnings = copy_dvint copy_health, add(5)
+mi register imputed impute_dvint  impute_earnings impute_health
+// First we would imputate on health since it has the least missing data//
 
-mi impute mlogit copy_health = copy_earnings copy_dvint , add(5)
+
+mi impute mlogit impute_health = impute_earnings impute_dvint , add(5)
+
+
+
+
+
+mi impute mlogit impute_dvint = impute_earnings impute_health , add(5)
+mi impute mlogit impute_earnings = impute_dvint impute_health, add(5)
+
+mi impute mlogit impute_health = impute_earnings impute_dvint, add(5)
 
 misstable patterns
 
-sum copy_earnings
-sum copy_dvint
+sum impute_earnings
+sum impute_dvint
+
+
+
+
+//------------------Summary of data after imputation---------------------//
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -277,8 +359,8 @@ sum copy_dvint
 //  -----------------Model Design--------------------//
 
 
-global ylist copy_dvint
-global xlist copy_earnings copy_health age 
+global ylist impute_dvint
+global xlist impute_earnings impute_health age 
 
 describe
 
@@ -327,7 +409,31 @@ feologit $ylist $xlist, i(nhispid_num) i(year) robust
 
 
 //iv
-xtivreg copy_dvint (copy_earnings = himedicaidyr) copy_health age, fe robust
+xtivreg impute_dvint (impute_earnings = himedicaidyr) impute_health age, fe robust
+
+
+
+
+//------------------- Now we need to replace everything with expectation----------------------------------//
+
+
+
+
+
+
+
+
+//-----------------------We need to also create a table of all the variables we used at the end------------------------------------------//
+
+
+
+
+
+
+
+
+
+
 
 
 
