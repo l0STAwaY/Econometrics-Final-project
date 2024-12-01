@@ -610,7 +610,7 @@ ologit dvint earnings
 
 
 // compare impute and un impuute for reference
-//https://stats.oarc.ucla.edu/stata/faq/how-can-i-get-margins-and-marginsplot-with-multiply-imputed-data/ citation for how I got this part to work
+
 
 ssc install mimrgns
 //
@@ -623,6 +623,9 @@ mimrgns, dydx(impute_earnings) atmeans predict(outcome(400))
 
 tabulate impute_earnings
 tabulate sex
+
+//https://stats.oarc.ucla.edu/stata/faq/how-can-i-get-margins-and-marginsplot-with-multiply-imputed-data/ citation for how I got this visualizeation to work
+
 
 program myret, rclass
     return add
@@ -730,8 +733,10 @@ isid year nhispid_num
 isid year nhishid_num 
 isid year poverty   
 
+ssc install cmp
 
 
+cmp setup
 
 
 //fixed effect
@@ -739,18 +744,19 @@ isid year poverty
 ologit impute_dvint impute_earnings impute_health age sex racenew i.year 
 
 
-ologit impute_earnings impute_himedicaidyr i.year
 
 
-// Get the predicted probabilities (non-linear predictions):
+cmp(impute_earnings = impute_himedicaidyr i.year impute_health age sex racenew)(impute_dvint  = impute_earnings impute_earnings impute_health age sex racenew i.year) ,ind ($cmp_mprobit $cmp_oprobit)
 
-
-
-
-ologit impute_earnings impute_himedicaidyr i.year
+//////
 
 
 
+
+
+regress impute_earnings impute_himedicaidyr impute_health age sex racenew i.year 
+
+drop fern_hat
 predict fern_hat, xb
 ologit impute_dvint fern_hat impute_health age sex racenew i.year 
 
@@ -779,7 +785,6 @@ marginsplot
 
 
 
-//------------------- Now we need to replace everything with expectation----------------------------------//
 
 
 
@@ -790,34 +795,12 @@ marginsplot
 
 
 
-
-
-
-//-----------------------We need to also create a table of all the variables we used at the end------------------------------------------//
-
+//---------------------------------------Unrealated
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-//---------------------------------------Unrealated test
-
-
-
-
-//A likelihood ratio test will therefore tell you whether simplification from multinomial logit to ordered logit is justified.
+//A likelihood ratio test will therefore tell you whether simplification from multinomial logit to ordered logit is justified, how ever mi is not based on 
 
 // An LR test can compare a Logit (binary outcome) model and an Mlogit (multinomial outcome) model because both use maximum likelihood estimation. The test evaluates whether the increased complexity of the Mlogit model, with more categories, significantly improves the fit over the simpler Logit model, thereby assessing if the added complexity is justified by the data.
 //https://www.statalist.org/forums/forum/general-stata-discussion/general/1653984-ordinal-or-multinomial-regression
