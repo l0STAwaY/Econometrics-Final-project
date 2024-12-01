@@ -621,6 +621,8 @@ mimrgns, dydx(impute_earnings) atmeans predict(outcome(302))
 mimrgns, dydx(impute_earnings) atmeans predict(outcome(305))
 mimrgns, dydx(impute_earnings) atmeans predict(outcome(400))
 
+tabulate impute_earnings
+tabulate sex
 
 program myret, rclass
     return add
@@ -630,27 +632,28 @@ end
 
 program drop emargins
 
+
+
 program emargins, eclass properties(mi)
   version 15
   args outcome
   ologit impute_dvint impute_earnings impute_health age sex racenew
-  margins, dydx(impute_earnings) ///
-    post  predict(outcome(`outcome')) 
+  margins, dydx(impute_earnings) at(sex=(1 2))atmeans asbalanced ///
+    post predict(outcome(`outcome'))
 end
 
 
-
-* Loop over each response category for impute_dvint
-forvalues i = 1/3 {
-
-    mi estimate, cmdok: emargins `i'  // emargins computes marginal effects
+* Loop over each unique value for impute_dvint
+foreach outcome in 100 203 204 302 305 400 {
+    * Estimate marginal effects using the 'emargins' program for each category of impute_dvint
+    mi estimate, cmdok: emargins `outcome'  // emargins computes marginal effects
     
     mat b = e(b_mi)  // Save the point estimates from MI
     mat V = e(V_mi)  // Save the variance-covariance matrix from MI
 
     * Now, run the ologit model for _mi_m==0 (non-missing data) to compute margins
     quietly ologit impute_dvint impute_earnings impute_health age sex racenew if _mi_m == 0
-    quietly margins, at(impute_earnings=(0(1)5)) atmeans asbalanced predict(outcome(`i'))
+    quietly margins,dydx(impute_earnings) at(sex=(1 2)) atmeans asbalanced predict(outcome(`outcome'))
 
     * Store the results for the margins command
     myret  // This would store the results if defined
@@ -660,11 +663,10 @@ forvalues i = 1/3 {
     mata: st_global("e(cmd)", "margins")
 
     * Now generate the plot
-    marginsplot, x(impute_earnings) recast(line) noci name(ologit`i', replace)
+    marginsplot, x(sex) recast(line) noci name(ologit`outcome', replace)
 }
 
-marginsplot 
- 
+marginsplot
  
 use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Working datset/nhis_fully_merged.dta"     // The fully merged is the one that I am using
 ologit dvint earnings
