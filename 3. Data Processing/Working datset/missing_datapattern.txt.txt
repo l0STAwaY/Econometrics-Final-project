@@ -1,0 +1,62 @@
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Working datset/missing_datapattern.txt.txt
+  log type:  text
+ opened on:  30 Nov 2024, 20:34:11
+
+. mi misstable pattern
+
+             Missing-value patterns
+               (1 means complete)
+
+              |   Pattern
+    Percent   |  1  2  3  4    5  6  7  8    9
+  ------------+--------------------------------
+       84%    |  1  1  1  1    1  1  1  1    1
+              |
+       10     |  1  1  1  1    1  1  1  1    0
+        2     |  1  1  1  1    1  1  1  0    0
+        1     |  1  1  1  1    1  1  0  1    1
+       <1     |  1  1  1  1    0  0  1  1    1
+       <1     |  1  1  1  1    1  1  0  1    0
+       <1     |  1  1  1  1    1  0  1  1    1
+       <1     |  1  1  1  1    1  1  1  0    1
+       <1     |  1  1  1  1    0  0  1  1    0
+       <1     |  1  1  1  1    0  1  1  1    1
+       <1     |  1  1  1  1    1  0  1  1    0
+       <1     |  1  1  1  1    0  0  0  1    1
+       <1     |  1  1  1  1    1  1  0  0    0
+       <1     |  1  1  1  1    0  1  1  1    0
+       <1     |  1  1  0  1    1  1  1  0    0
+       <1     |  1  1  1  1    0  1  1  0    0
+       <1     |  1  1  1  1    1  0  1  0    0
+       <1     |  1  0  1  1    1  1  1  1    1
+       <1     |  1  1  1  0    1  1  1  0    0
+       <1     |  1  1  1  0    1  1  1  1    0
+       <1     |  1  1  1  1    0  0  1  0    0
+       <1     |  0  1  1  1    1  1  1  0    0
+       <1     |  0  1  1  1    1  1  1  1    1
+       <1     |  1  0  1  1    1  1  1  1    0
+       <1     |  1  1  0  1    0  0  0  0    0
+       <1     |  1  1  0  1    1  1  1  1    0
+       <1     |  1  1  1  0    0  0  1  0    0
+       <1     |  1  1  1  0    0  0  1  1    0
+       <1     |  1  1  1  0    1  1  0  0    1
+       <1     |  1  1  1  0    1  1  1  0    1
+       <1     |  1  1  1  1    1  0  0  0    0
+       <1     |  1  1  1  1    1  0  0  1    0
+       <1     |  1  1  1  1    1  0  0  1    1
+       <1     |  1  1  1  1    1  0  1  0    1
+       <1     |  1  1  1  1    1  1  0  0    1
+  ------------+--------------------------------
+      100%    |
+
+  Variables are  (1) impute_mcareprob  (2) impute_health  (3) impute_educ  (4) impute_gotwelf  (5) impute_wormedbill  (6) impute_dvint  (7) impute_himedicaidyr  (8) impute_poverty
+                 (9) impute_earnings
+
+. log close
+      name:  <unnamed>
+       log:  /Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Working datset/missing_datapattern.txt.txt
+  log type:  text
+ closed on:  30 Nov 2024, 20:34:11
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

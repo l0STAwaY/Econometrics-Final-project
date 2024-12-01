@@ -1,8 +1,4 @@
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-      name:  <unnamed>
-       log:  /Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Original dataset/chi2_results.txt
-  log type:  text
- opened on:  30 Nov 2024, 03:29:33
+
 
 Performing chi2 test on impute_dvint and impute_earnings
 
@@ -818,12 +814,3 @@ impute_mca |        impute_wormedbill
 
           Pearson chi2(4) =  24.3602   Pr = 0.000
 Chi-squared: 24.360178, p-value: .00006764
-
-. 
-. * Step 4: Close the log file
-. log close
-      name:  <unnamed>
-       log:  /Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Original dataset/chi2_results.txt
-  log type:  text
- closed on:  30 Nov 2024, 03:29:33
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
