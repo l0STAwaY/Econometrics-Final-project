@@ -744,44 +744,30 @@ cmp setup
 ologit impute_dvint impute_earnings impute_health age sex racenew i.year 
 
 
+//conditional mixed process (cmp)
 
-
-cmp(impute_earnings = impute_himedicaidyr i.year impute_health age sex racenew)(impute_dvint  = impute_earnings impute_earnings impute_health age sex racenew i.year) ,ind ($cmp_mprobit $cmp_oprobit)
+cmp(impute_earnings = impute_himedicaidyr i.year impute_health age sex racenew)(impute_dvint  = impute_earnings impute_health age sex racenew i.year) ,ind ($cmp_mprobit $cmp_oprobit)
 
 //////
 
 
-
-
-
-regress impute_earnings impute_himedicaidyr impute_health age sex racenew i.year 
-
-drop fern_hat
-predict fern_hat, xb
-ologit impute_dvint fern_hat impute_health age sex racenew i.year 
-
-
-margins, dydx(ff_hat) 
-marginsplot
-
 //------------------model for impute_wormedbill--------------//
 
 
-ologit impute_wormedbill impute_earnings impute_health age sex racenew i.year 
+// You can use 2SLS in the following cases:
+// 1) 𝑌𝑌𝑖𝑖𝑖𝑖 and 𝑃𝑃𝑖𝑖𝑖𝑖 are both continuous variables
+// 2) 𝑌𝑌𝑖𝑖𝑖𝑖 is discrete, and 𝑃𝑃𝑖𝑖𝑖𝑖 is continuous
+// 3) 𝑌𝑌𝑖𝑖𝑖𝑖 is continuous, and 𝑃𝑃𝑖𝑖𝑖𝑖 is discrete, but it is better to use maximum likelihood estimation
+// (MLE) procedures. The Stata command treatreg can do that easily.
+// If 𝑌𝑌𝑖𝑖𝑖𝑖 and 𝑃𝑃𝑖𝑖𝑖𝑖are both discrete, you should not use 2SLS, you should use a MLE method that
+// estimates both equations simultaneously. You can use biprobit or mvprobit commands in
+// Stata. the sfirst method is perfered
 
 
 
-ologit impute_wormedbill  impute_himedicaidyr i.year
-
-predict fwor_hat, xb
-ologit impute_dvint  fwor_hat impute_health age sex racenew i.year 
-margins, dydx(fwor_hat) 
-marginsplot
-
-
-
-
-
+cmp(impute_wormedbill = impute_himedicaidyr i.year impute_health age sex racenew) ///
+    (impute_dvint = impute_wormedbill impute_health age sex racenew i.year), ///
+    ind($cmp_mprobit $cmp_oprobit)
 
 
 
