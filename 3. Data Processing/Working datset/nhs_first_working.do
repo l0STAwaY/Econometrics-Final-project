@@ -473,7 +473,6 @@ replace impute_gotwelf = 1 if impute_gotwelf == 21
 
 describe
 
-mi estimate: ologit $ylist $xlist, robust
 
 mi impute chained (ologit, augment) impute_health impute_educ impute_poverty impute_dvint impute_earnings impute_wormedbill ///
     (logit, augment) impute_gotwelf impute_himedicaidyr = age sex racenew ///
@@ -594,7 +593,7 @@ mi estimate: ologit impute_dvint impute_earnings, robust
 mi estimate: ologit impute_dvint impute_earnings impute_health, robust
 mi estimate: ologit impute_dvint impute_earnings impute_health age, robust
 mi estimate: ologit impute_dvint impute_earnings impute_health age sex, robust
-mi estimate: ologit impute_dvint impute_earnings impute_health age sex racenew, robust 
+mi estimate: ologit impute_dvint impute_earnings impute_health age sex racenew,robust
 
 
 
@@ -609,29 +608,77 @@ eststo ologit_dvint
 ologit dvint earnings
 
 
+
+// compare impute and un impuute for reference
+//https://stats.oarc.ucla.edu/stata/faq/how-can-i-get-margins-and-marginsplot-with-multiply-imputed-data/ citation for how I got this part to work
+
 ssc install mimrgns
 //
-mimrgns, dydx(*) atmeans predict(outcome(100))
-mimrgns, dydx(*) atmeans predict(outcome(203))
-mimrgns, dydx(*) atmeans predict(outcome(204))
-mimrgns, dydx(*) atmeans predict(outcome(302))
-mimrgns, dydx(*) atmeans predict(outcome(305))
-mimrgns, dydx(*) atmeans predict(outcome(400))
+mimrgns, dydx(impute_earnings) atmeans predict(outcome(100))
+mimrgns, dydx(impute_earnings) atmeans predict(outcome(203))
+mimrgns, dydx(impute_earnings) atmeans predict(outcome(204))
+mimrgns, dydx(impute_earnings) atmeans predict(outcome(302))
+mimrgns, dydx(impute_earnings) atmeans predict(outcome(305))
+mimrgns, dydx(impute_earnings) atmeans predict(outcome(400))
+
+
+program myret, rclass
+    return add
+    return matrix b = b
+    return matrix V= V
+end
+
+program drop emargins
+
+program emargins, eclass properties(mi)
+  version 15
+  args outcome
+  ologit impute_dvint impute_earnings impute_health age sex racenew
+  margins, dydx(impute_earnings) ///
+    post  predict(outcome(`outcome')) 
+end
 
 
 
+* Loop over each response category for impute_dvint
+forvalues i = 1/3 {
+
+    mi estimate, cmdok: emargins `i'  // emargins computes marginal effects
+    
+    mat b = e(b_mi)  // Save the point estimates from MI
+    mat V = e(V_mi)  // Save the variance-covariance matrix from MI
+
+    * Now, run the ologit model for _mi_m==0 (non-missing data) to compute margins
+    quietly ologit impute_dvint impute_earnings impute_health age sex racenew if _mi_m == 0
+    quietly margins, at(impute_earnings=(0(1)5)) atmeans asbalanced predict(outcome(`i'))
+
+    * Store the results for the margins command
+    myret  // This would store the results if defined
+
+    * Technically, we ran myret between margins and marginsplot.
+    * Set the previous command to margins to make marginsplot work.
+    mata: st_global("e(cmd)", "margins")
+
+    * Now generate the plot
+    marginsplot, x(impute_earnings) recast(line) noci name(ologit`i', replace)
+}
+
+marginsplot 
+ 
+ 
 use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Working datset/nhis_fully_merged.dta"     // The fully merged is the one that I am using
 ologit dvint earnings
 eststo dvint_ologit
 
-margins, dydx(*) atmeans predict(outcome(100))
-margins, dydx(*) atmeans predict(outcome(203))
-margins, dydx(*)  atmeans predict(outcome(204))
-margins, dydx(*)  atmeans predict(outcome(302))
-margins, dydx(*)  atmeans predict(outcome(305))
-margins, dydx(*) atmeans predict(outcome(400))
+margins, dydx(impute_earnings) atmeans predict(outcome(100))
+margins, dydx(impute_earnings) atmeans predict(outcome(203))
+margins, dydx(impute_earnings) atmeans predict(outcome(204))
+margins, dydx(impute_earnings) atmeans predict(outcome(302))
+margins, dydx(impute_earnings) atmeans predict(outcome(305))
+margins, dydx(impute_earnings) atmeans predict(outcome(400))
 
 
+margins, dydx(*) 
 ssc install feologit
 
 
@@ -666,54 +713,62 @@ mi estimate: feologit impute_dvint impute_earnings impute_health age sex racenew
 
 use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Working datset/nhis_fully_imputated_extract.dta"   
 
-mi set mlong
 
-mi extract 1
+
+mi extract 
 
 // make sure we are working with imputated data
 misstable summarize
 
 
 
-encode nhispid, gen(nhispid_num)
-xtset nhispid_num year
-* Run the Fixed Effects Ordered Logit Model
-feologit impute
-
-
-$ylist_earn $xlist_earn
-
-
-xtivreg impute_dvint (impute_earnings = himedicaidyr) impute_health age, fe
-
-
-tabulate year
-
-* Run the Fixed Effects IV regression on the extracted data
-xtivreg impute_dvint (impute_earnings = himedicaidyr) impute_health age i.year, fe
-
-* If you want to combine results from multiple imputations, you can use:
-mi estimate: xtivreg impute_dvint (impute_earnings = himedicaidyr) impute_health age, fe
+// check for fixed effect id
+tabulate nhishid   
+isid year nhispid_num 
+isid year nhishid_num 
+isid year poverty   
 
 
 
-describe
 
-mi describe
 
+//fixed effect
+
+ologit impute_dvint impute_earnings impute_health age sex racenew i.year 
+
+
+ologit impute_earnings impute_himedicaidyr i.year
+
+
+// Get the predicted probabilities (non-linear predictions):
+
+
+
+
+ologit impute_earnings impute_himedicaidyr i.year
+
+
+
+predict fern_hat, xb
+ologit impute_dvint fern_hat impute_health age sex racenew i.year 
+
+
+margins, dydx(ff_hat) 
+marginsplot
 
 //------------------model for impute_wormedbill--------------//
 
 
-mi estimate: ologit impute_wormedbill impute_earnings, robust
-mi estimate: ologit impute_wormedbill  impute_earnings impute_health, robust
-mi estimate: ologit impute_dvint impute_earnings impute_health age, robust
-mi estimate: ologit impute_dvint impute_earnings impute_health age sex, robust
-mi estimate: ologit impute_dvint impute_earnings impute_health age sex racenew, robust 
+ologit impute_wormedbill impute_earnings impute_health age sex racenew i.year 
 
 
 
+ologit impute_wormedbill  impute_himedicaidyr i.year
 
+predict fwor_hat, xb
+ologit impute_dvint  fwor_hat impute_health age sex racenew i.year 
+margins, dydx(fwor_hat) 
+marginsplot
 
 
 
