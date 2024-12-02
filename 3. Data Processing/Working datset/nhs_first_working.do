@@ -44,7 +44,7 @@ merge 1:1 year nhispid using "Extra_medicaid_original.dta", generate(_merge_medi
 
 //--------Now the data is fully merged------------//
 
-use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Working datset/nhis_fully_merged.dta"
+use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Original datset/nhis_fully_merged_original.dta"
 describe
 
 
@@ -55,7 +55,7 @@ describe
 //289,322  --> 94,587     58 varaible
 drop if dvint == 0 | earnings == 0 | educ == 0 | poverty == 98 | himedicaidyr == 0 |   gotwelf == 0 | wormedbill  == 0 
 
-count if himedicaidyr == 7 
+
 
 drop if mcareprob == 0 & age >= 65
 
@@ -144,7 +144,7 @@ use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing
 outsheet using "merged_data_description.txt", replace
 
 
-count if poverty == 99 | poverty ==98
+
 
 
 
@@ -153,7 +153,7 @@ count if poverty == 99 | poverty ==98
 
 **# Bookmark #4
 
-//------------------------------MISSING DATA---------------------------------//
+//------------------------------MISSING DATA Funciton---------------------------------//
 //Learning about missing data for merged and unmerged//
 use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Working datset/nhis_first_working.dta"   
 
@@ -318,6 +318,9 @@ replace impute_mcareprob =. if mcareprob == 7
 replace impute_mcareprob =. if mcareprob == 8
 replace impute_mcareprob =. if mcareprob == 9
 
+
+misstable summarize
+
 // Create missing data indicators
 gen missing_dvint = missing(impute_dvint)
 gen missing_earnings = missing(impute_earnings)
@@ -340,7 +343,7 @@ label variable missing_gotwelf "Missing indicator for gotwelf"
 label variable missing_wormedbill "Missing indicator for wormedbill"
 label variable missing_mcareprob "Missing indicator for mcareprob"
 
-
+describe
 
 
 
@@ -348,14 +351,22 @@ label variable missing_mcareprob "Missing indicator for mcareprob"
 
 
 
+
+
+
 //----------------------Data imputation using ologit------------------------------//
 
+use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Working datset/nhis_fully_merged.dta"     // The fully merged is the one that I am using
 // if the mcartest tell us we fail to reject null hypthesis that the data is MAC, we can say droping the variable would be ok since all missing data are purely random
-mcartest imputed impute_dvint impute_earnings impute_health impute_educ impute_poverty impute_himedicaidyr impute_gotwelf impute_wormedbill impute_mcareprob age sex racenew  
+
+mcartest impute_dvint impute_earnings impute_health impute_educ impute_poverty impute_himedicaidyr impute_gotwelf impute_wormedbill age sex racenew  
+
 
 // determine order of imputation //
+// I realize I can use misstable afterwards
 
-// Tabulate missing data for each variable
+misstable summarize
+// Tabulate missing data for each variable 
 tabulate missing_dvint
 tabulate missing_earnings
 tabulate missing_health
@@ -370,64 +381,74 @@ tabulate missing_mcareprob if age >= 65
 
 
 
-// Run 
-local vars impute_dvint impute_earnings impute_health impute_educ impute_poverty impute_himedicaidyr impute_gotwelf impute_wormedbill impute_mcareprob
+tabulate missing_educ impute_earnings
 
-* Logistic regression for missing_earnings (excluding impute_earnings)
-logistic missing_earnings impute_dvint impute_health impute_educ impute_poverty impute_himedicaidyr impute_gotwelf impute_wormedbill impute_mcareprob age sex racenew
+
+// missing mechanic test
+
+
+
+
+
+
+* Logistic regression for missing_earnings 
+logistic missing_earnings impute_dvint impute_health impute_educ impute_poverty impute_himedicaidyr impute_gotwelf impute_wormedbill age sex racenew
 estimates store reg_missing_earnings
 
-* Logistic regression for missing_health (excluding impute_health)
-logistic missing_health impute_dvint impute_earnings impute_educ impute_poverty impute_himedicaidyr impute_gotwelf impute_wormedbill impute_mcareprob age sex racenew
+* Logistic regression for missing_health 
+logistic missing_health impute_dvint impute_earnings impute_educ impute_poverty impute_himedicaidyr impute_gotwelf impute_wormedbill  age sex racenew
 estimates store reg_missing_health
 
-* Logistic regression for missing_dvint (excluding impute_dvint)
-logistic missing_dvint impute_health impute_earnings impute_educ impute_poverty impute_himedicaidyr impute_gotwelf impute_wormedbill impute_mcareprob age sex racenew
+* Logistic regression for missing_dvint 
+logistic missing_dvint impute_health impute_earnings impute_educ impute_poverty impute_himedicaidyr impute_gotwelf impute_wormedbill age sex racenew
 estimates store reg_missing_dvint
 
-* Logistic regression for missing_educ (excluding impute_educ)
-logistic missing_educ impute_dvint impute_earnings impute_health impute_poverty impute_himedicaidyr impute_gotwelf impute_wormedbill impute_mcareprob age sex racenew
+
+//
+
+* Logistic regression for missing_educ 
+logistic missing_educ impute_dvint impute_health impute_poverty impute_himedicaidyr impute_gotwelf impute_wormedbill  age sex racenew
 estimates store reg_missing_educ
 
-* Logistic regression for missing_poverty (excluding impute_poverty)
-logistic missing_poverty impute_dvint impute_earnings impute_health impute_educ impute_himedicaidyr impute_gotwelf impute_wormedbill impute_mcareprob age sex racenew
+* Logistic regression for missing_poverty 
+logistic missing_poverty impute_dvint impute_earnings impute_health impute_educ impute_himedicaidyr impute_gotwelf impute_wormedbill  age sex racenew
 estimates store reg_missing_poverty
 
-* Logistic regression for missing_himedicaidyr (excluding impute_himedicaidyr)
-logistic missing_himedicaidyr impute_dvint impute_earnings impute_health impute_educ impute_poverty impute_gotwelf impute_wormedbill impute_mcareprob age sex racenew
+* Logistic regression for missing_himedicaidyr 
+logistic missing_himedicaidyr impute_dvint impute_earnings impute_health impute_educ impute_poverty impute_gotwelf impute_wormedbill age sex racenew
 estimates store reg_missing_himedicaidyr
 
-* Logistic regression for missing_gotwelf (excluding impute_gotwelf)
-logistic missing_gotwelf impute_dvint impute_earnings impute_health impute_educ impute_poverty impute_himedicaidyr impute_wormedbill impute_mcareprob age sex racenew
+
+
+* Logistic regression for missing_gotwelf 
+logistic missing_gotwelf impute_dvint impute_health impute_educ impute_poverty impute_himedicaidyr impute_wormedbill age sex racenew
 estimates store reg_missing_gotwelf
 
-* Logistic regression for missing_wormedbill (excluding impute_wormedbill)
-logistic missing_wormedbill impute_dvint impute_earnings impute_health impute_educ impute_poverty impute_himedicaidyr impute_gotwelf impute_mcareprob age sex racenew
+* Logistic regression for missing_wormedbill 
+logistic missing_wormedbill impute_dvint impute_earnings impute_health impute_educ impute_poverty impute_himedicaidyr impute_gotwelf age sex racenew
 estimates store reg_missing_wormedbill
 
-* Logistic regression for missing_mcareprob (excluding impute_mcareprob)
-logistic missing_mcareprob impute_dvint impute_earnings impute_health impute_educ impute_poverty impute_himedicaidyr impute_gotwelf impute_wormedbill age sex racenew
-estimates store reg_missing_mcareprob
+
 
 
 * Missingness results to a text file including R-squared
-esttab reg_missing_earnings reg_missing_health reg_missing_dvint reg_missing_poverty reg_missing_himedicaidyr reg_missing_wormedbill reg_missing_mcareprob using missingness_test.txt, replace eform stat(r2_p se p)
+esttab reg_missing_earnings reg_missing_health reg_missing_dvint reg_missing_poverty reg_missing_himedicaidyr reg_missing_wormedbill using missingness_test_finalllll.txt, replace eform stat(r2_p se p)
 
 
 
 
-// chi
+// chi idnependence test
 
 
-local vars impute_dvint impute_earnings impute_health impute_educ impute_poverty ///
-           impute_himedicaidyr impute_gotwelf impute_wormedbill impute_mcareprob
+local vars impute_dvint impute_earnings impute_health impute_educ impute_poverty impute_himedicaidyr impute_gotwelf impute_wormedbill impute_mcareprob
 
 
-log using "chi2_results.txt", replace text
+log using "chi2_results_final.txt", replace text
 
+* Assuming 'vars' is a local macro that contains the list of variable names
 foreach var1 of local vars {
     foreach var2 of local vars {
-        * Avoid redundant pairs (impute_dvint vs impute_dvint)
+        * Avoid redundant pairs (e.g., impute_dvint vs impute_dvint)
         if "`var1'" < "`var2'" {
             * Perform the chi2 test
             display "Performing chi2 test on `var1' and `var2'"
@@ -440,7 +461,38 @@ foreach var1 of local vars {
 }
 
 
+
 log close
+
+// if it doesn't work then put it in the command line along with local, likly the for each loop is not seeing the local variable
+
+local vars impute_dvint impute_earnings impute_health impute_educ impute_poverty impute_himedicaidyr impute_gotwelf impute_wormedbill impute_mcareprob
+
+log using "chi2_V_results_final.txt", replace text
+
+
+
+foreach var1 of local vars {
+    foreach var2 of local vars {
+        * Avoid redundant pairs (impute_dvint vs impute_dvint as string compare)
+        if "`var1'" < "`var2'" {
+            * Perform the chi2 test
+            display "Performing chi2 V test on `var1' and `var2'"
+            tabulate `var1' `var2', chi V         // as macro variable
+            * Calculate and display Cramér's V
+            local chi2 = r(chi2)
+            local n = _N
+            local k = min(r(r1), r(r2))
+            local cramersv = sqrt(`chi2'/(`n' * (`k' - 1)))
+            display "Cramér's V: " `cramersv'
+        }
+		
+	
+    }
+}
+
+log close
+
 
 
 
@@ -454,15 +506,17 @@ mi register imputed impute_dvint impute_earnings impute_health impute_educ imput
 
 log using "missing_datapattern.txt.txt", replace text
 mi misstable pattern
+mi describe, detail
 log close
 
-tabulate impute_himedicaidyr
+tabulate impute_himedicaidyr 
+
 tabulate impute_gotwelf
 tabulate impute_mcareprob 
 
 
 
-// we need to change some of the variable for logit regression
+// we need to change some of the variable for logit regression do this first
 replace impute_himedicaidyr = 0 if impute_himedicaidyr == 1
 replace impute_himedicaidyr = 1 if impute_himedicaidyr == 2
 
@@ -474,10 +528,12 @@ replace impute_gotwelf = 1 if impute_gotwelf == 21
 describe
 
 
-mi impute chained (ologit, augment) impute_health impute_educ impute_poverty impute_dvint impute_earnings impute_wormedbill ///
-    (logit, augment) impute_gotwelf impute_himedicaidyr = age sex racenew ///
+mi impute chained (ologit, augment)  impute_health impute_educ impute_poverty impute_dvint impute_earnings impute_wormedbill ///
+    (logit, augment) impute_himedicaidyr impute_gotwelf = age sex racenew ///
     if age < 65, ///
-    add(5) replace noisily
+    add(5) noisily
+	
+
 
 
 
@@ -549,7 +605,10 @@ mi impute ologit impute_earnings = impute_health impute_dvint impute_himedicaidy
 
 
 
-	
+mi describe,detail
+// also make sure we are working with imputated data this should be 0 we are good
+
+count if impute_mcareprob == .& age >65
 	
 //------------------Summary of data after imputation---------------------//
 
@@ -588,15 +647,29 @@ describe
 // eststo mlogit_dvint
 // lrtest mlogit_dvint ologit_dvint, force
 
+// create a special term for impute_mcareprob_dummy that only terms on when its above age 65 in other cases missing
+
+gen impute_mcareprob_dummy = .
+replace impute_mcareprob_dummy = 0 if age >=65 & impute_mcareprob == 1
+replace impute_mcareprob_dummy = 1 if age >=65 & impute_mcareprob == 2
+
+
+
+
 // slowly including more variable
 mi estimate: ologit impute_dvint impute_earnings, robust
 mi estimate: ologit impute_dvint impute_earnings impute_health, robust
 mi estimate: ologit impute_dvint impute_earnings impute_health age, robust
 mi estimate: ologit impute_dvint impute_earnings impute_health age sex, robust
-mi estimate: ologit impute_dvint impute_earnings impute_health age sex racenew,robust
+mi estimate: ologit impute_dvint impute_earnings impute_health age sex racenew, robust
+mi estimate: ologit impute_dvint impute_earnings impute_health age sex racenew impute_mcareprob_dummy, robust
 
+mi estimate: ologit impute_dvint impute_earnings impute_health age sex racenew i.age_65_dummy2, robust 
 
+ misstable summarize
 
+tabulate impute_mcareprob
+tabulate impute_mcareprob_dummy
 //maginal effect
 
 tabulate impute_dvint
@@ -605,7 +678,7 @@ eststo ologit_dvint
 
 
 
-ologit dvint earnings
+ologit dvint earnings 
 
 
 
@@ -671,46 +744,6 @@ foreach outcome in 100 203 204 302 305 400 {
 
 marginsplot
  
-use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Working datset/nhis_fully_merged.dta"     // The fully merged is the one that I am using
-ologit dvint earnings
-eststo dvint_ologit
-
-margins, dydx(impute_earnings) atmeans predict(outcome(100))
-margins, dydx(impute_earnings) atmeans predict(outcome(203))
-margins, dydx(impute_earnings) atmeans predict(outcome(204))
-margins, dydx(impute_earnings) atmeans predict(outcome(302))
-margins, dydx(impute_earnings) atmeans predict(outcome(305))
-margins, dydx(impute_earnings) atmeans predict(outcome(400))
-
-
-margins, dydx(*) 
-ssc install feologit
-
-
-describe
-
-
-// Fixed effect model ssc install feologit
-
-encode nhispid, gen(nhispid_num)
-
-
-duplicates report nhispid year
-
-mi xtset region year
-xtlogitdvint impute_earnings, fe
-
-
-encode nhispid, generate(nhispid_num)
-
-
-tabulate nhispid
-mi xtset nhispid_num year
-mi estimate: ologit impute_dvint impute_earnings impute_health age sex racenew i.year 
-
-mi estimate: feologit impute_dvint impute_earnings impute_health age sex racenew
-
-
 
 
 
@@ -720,11 +753,12 @@ use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing
 
 
 
-mi extract 
+mi extract 1
 
-// make sure we are working with imputated data
+// make sure we are working with imputated data this should be 0 we are good
+
+count if impute_mcareprob == .& age >65
 misstable summarize
-
 
 
 // check for fixed effect id
@@ -763,7 +797,7 @@ cmp(impute_earnings = impute_himedicaidyr i.year impute_health age sex racenew)(
 // estimates both equations simultaneously. You can use biprobit or mvprobit commands in
 // Stata. the sfirst method is perfered
 
-
+ologit impute_dvint impute_wormedbill impute_health age sex racenew i.year 
 
 cmp(impute_wormedbill = impute_himedicaidyr i.year impute_health age sex racenew) ///
     (impute_dvint = impute_wormedbill impute_health age sex racenew i.year), ///

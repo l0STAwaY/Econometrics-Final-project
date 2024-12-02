@@ -1,0 +1,99 @@
+-------------------------------------------------------------------------------------
+                              (1)                                                    
+                                                                                     
+                            count         mean           sd          min          max
+-------------------------------------------------------------------------------------
+survey year                  8720     2016.921      .824918         2016         2018
+sequential serial ~h         8720     25640.71     15290.86            3        59186
+stratum for varian~n         8720     7125.489     15.68688         7100         7151
+primary sampling u~          8720     31.87007      29.9955            1          155
+nhis unique identi~l            0            .            .            .            .
+household weight, ~l         8720     3388.949     1679.885          251        13821
+region of residence          8720     2.768349      .945108            1            4
+person number with~s         8720     1.390711     .7329394            1           14
+nhis unique identi~n            0            .            .            .            .
+household number (~)            0            .            .            .            .
+family number (fro~)            0            .            .            .            .
+person number of r~o            0            .            .            .            .
+final basic annual~t         8720     4062.487     2082.847          257        17144
+sample person weight         8720     9430.262      7650.94          316        90116
+final annual famil~t         8720     3796.562     1948.873          257        17144
+sample adult flag            8720            1            0            1            1
+sample child flag            8720            0            0            0            0
+age                          8720     39.33039       12.631           18           78
+sex                          8720     1.462156     .4985944            1            2
+self-reported race~m         8720     141.3579      97.4455          100          541
+u.s. citizenship             8720     1.876147      .501659            1            9
+above or below pov~d         8720     1.347018     1.208218            1            9
+total combined fa~20         8720     18.80344      17.4714           10           99
+person's total ear~u         8720     17.35436     31.17963            1           99
+interval since las~t         8720     250.9338     113.2072          100          999
+was in a hospital ~p         8720     1.067546     .2927451            1            9
+number times in e~12         8720      14.2664     11.63985           10           99
+received home care~p         8720     1.090252     .7646547            1            9
+has usual place fo~e         8720     1.694839     .7629276            1            9
+kind of usual plac~          8720      86.6867     95.10435            0          999
+medical care delay~t         8720     1.312041     .4972612            1            9
+needed but couldn'~c         8720     1.241284     .4606724            1            9
+needed but couldn'~c         8720     1.230849     .7559302            1            9
+worried about payi~l         8720     1.996789     1.041732            1            9
+delayed filling pr~          8720     .5747706     .6951448            0            9
+took less medicati~n         8720     .5537844     .6614563            0            9
+skipped medication~e         8720     .5529817     .6603063            0            9
+problems paying or~y         8720     1.281881     .5168496            1            9
+unable to pay medi~s         8720      .447133     .8137501            0            9
+health insurance c~s         8720     1.591628     .4915607            1            2
+has state-sponsore~          8720     1.024197     .1536699            1            2
+has medicare insur~e         8720     1.006193     .0784539            1            2
+type of medicare c~e         8720     .0277523       .34987            0            9
+medicare part d              8720     .0206422     .3191852            0            9
+medicare coverage ~r         8720     .0123853     .1761897            0            9
+plan 1: paid for b~e         8720     .5341743     1.450163            0            9
+plan 2: paid for b~e         8720     .0110092     .1655442            0            9
+looked up health i~          8720     1.635436     .9051883            1            9
+health status                8720     2.244381     .9992671            1            9
+Matching result fr~e         8720            3            0            3            3
+has medicaid insur~e         8720     1.070413     .2558562            1            2
+obtained medicaid ~h         8720     .1489679     .6794791            0            9
+medicaid plan prem~-         8720     .0188073      .269426            0            9
+had medicaid cover~s         8720     1.284174     1.155717            1            9
+plan 1: paid for b~d         8720      .534633     1.450468            0            9
+plan 2: paid for b~d         8720     .0111239     .1665725            0            9
+Matching result fr~e         8720            3            0            3            3
+educational attain~t         8720     272.1666     116.2038          102          999
+employment status ~2         8720     127.0177     39.53613          111          999
+received income fr~b         8720     10.17225      2.51759           10           90
+ratio of family in~t         8720     28.54748     13.57052           11           99
+Matching result fr~e         8720            3            0            3            3
+covered by medicai~e         8720     1.086353     .2825295            1            3
+medicaid coverage ~e         8720     .5912844     .5553788            0            9
+Matching result fr~e         8720            3            0            3            3
+impute_dvint                 8592     239.8026     67.56372          100          400
+impute_earnings              7600     5.424737     2.673114            1           11
+impute_health                8717     2.242285     .9928781            1            5
+impute_educ                  8715     271.7508     114.9324          102          999
+impute_poverty               8528      26.9613      8.60386           11           38
+impute_himedicaidyr          8540     1.123419      .328937            1            2
+impute_gotwelf               8712     10.10354     1.062214           10           21
+impute_wormedbill            8620     1.925638      .809026            1            3
+impute_mcareprob               67     1.373134     .4872875            1            2
+missing_dvint                8720     .0146789     .1202709            0            1
+missing_earnings             8720     .1284404     .3345987            0            1
+missing_health               8720      .000344     .0185461            0            1
+missing_educ                 8720     .0005734     .0239402            0            1
+missing_poverty              8720     .0220183     .1467515            0            1
+missing_himedicaidyr         8720     .0206422     .1421915            0            1
+missing_gotwelf              8720     .0009174      .030277            0            1
+missing_wormedbill           8720     .0114679     .1064785            0            1
+missing_mcareprob            8720     .9923165     .0873231            0            1
+esample() from est~e         8720     .9436927     .2305275            0            1
+esample() from est~e         8720      .587156     .4923735            0            1
+esample() from est~e         8720      .841055     .3656457            0            1
+esample() from est~e         8720     .0142202     .1184043            0            1
+esample() from est~e         8720     .8396789     .3669246            0            1
+esample() from est~e         8720          .85     .3570919            0            1
+esample() from est~e         8720     .7387615     .4393348            0            1
+esample() from est~e         8720        .7375     .4400181            0            1
+-------------------------------------------------------------------------------------
+Observations                 8720                                                    
+-------------------------------------------------------------------------------------
