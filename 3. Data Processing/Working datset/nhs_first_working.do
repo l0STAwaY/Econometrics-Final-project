@@ -663,10 +663,9 @@ mi estimate: ologit impute_dvint impute_earnings impute_health age, robust
 mi estimate: ologit impute_dvint impute_earnings impute_health age sex, robust
 mi estimate: ologit impute_dvint impute_earnings impute_health age sex racenew, robust
 mi estimate: ologit impute_dvint impute_earnings impute_health age sex racenew impute_mcareprob_dummy, robust
-
 mi estimate: ologit impute_dvint impute_earnings impute_health age sex racenew i.age_65_dummy2, robust 
 
- misstable summarize
+misstable summarize
 
 tabulate impute_mcareprob
 tabulate impute_mcareprob_dummy
@@ -686,6 +685,8 @@ ologit dvint earnings
 
 
 ssc install mimrgns
+
+mimrgns, dydx(impute_earnings) atmeans
 //
 mimrgns, dydx(impute_earnings) atmeans predict(outcome(100))
 mimrgns, dydx(impute_earnings) atmeans predict(outcome(203))

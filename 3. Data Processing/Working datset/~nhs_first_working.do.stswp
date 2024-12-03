@@ -630,7 +630,6 @@ mi describe,detail
 
 use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Working datset/nhis_fully_impute.dta"   
 
-mi describe, detail
 
 global ylist_earn impute_dvint
 global xlist_earn impute_dvint impute_earnings impute_health age sex racenew
@@ -655,70 +654,16 @@ replace impute_mcareprob_dummy = 0 if age >=65 & impute_mcareprob == 1
 replace impute_mcareprob_dummy = 1 if age >=65 & impute_mcareprob == 2
 
 
-gen age_dummy = 0
-replace age_dummy = 1 if age >=65 
 
 
-count if age<65
-
-
-
-
-// we can use mi estimate, or post: ologit impute_dvint impute_earnings, robust to transform to odds ratio but marginal effect is going to that anyways
-// previous population regression function
-// model7 attempts another interaction term not specified in the population model but as expected 
-
-eststo clear
-
-mi estimate,post : ologit impute_dvint impute_earnings
-eststo model1
-
-mi estimate,post: ologit impute_dvint impute_earnings impute_health 
-eststo model2
-
-mi estimate,post: ologit impute_dvint impute_earnings impute_health  i.impute_earnings#i.impute_health
-eststo model7
-
-mi estimate,post: ologit impute_dvint impute_earnings impute_health 
-
-mi estimate, post: ologit impute_dvint impute_earnings impute_health sex
-eststo model3
-
-mi estimate, post: ologit impute_dvint impute_earnings impute_health age sex
-eststo model4
-
-mi estimate, post: ologit impute_dvint impute_earnings impute_health age sex racenew
-eststo model5
-
-mi estimate, post: ologit impute_dvint impute_earnings impute_health age sex racenew age_dummy impute_mcareprob impute_mcareprob_dummy
-eststo model6
-
-esttab model1 model2 model3 model4 model5 model6 model7 using mi_ologit_dummy_table.rtf, replace
-
-
-
-// current population regression function
-
-eststo clear
-
-
-mi estimate, post: ologit impute_dvint impute_earnings if age < 65
-eststo model1
-
-mi estimate, post: ologit impute_dvint impute_earnings impute_health if age < 65
-eststo model2
-
-mi estimate, post: ologit impute_dvint impute_earnings impute_health sex if age < 65
-eststo model3
-
-mi estimate, post: ologit impute_dvint impute_earnings impute_health age sex if age < 65
-eststo model4
-
-mi estimate, post: ologit impute_dvint impute_earnings impute_health age sex racenew if age < 65
-eststo model5
-
-esttab model1 model2 model3 model4 model5 using mi_ologit_nodummy_table.rtf, replace
-
+// slowly including more variable
+mi estimate: ologit impute_dvint impute_earnings, robust
+mi estimate: ologit impute_dvint impute_earnings impute_health, robust
+mi estimate: ologit impute_dvint impute_earnings impute_health age, robust
+mi estimate: ologit impute_dvint impute_earnings impute_health age sex, robust
+mi estimate: ologit impute_dvint impute_earnings impute_health age sex racenew, robust
+mi estimate: ologit impute_dvint impute_earnings impute_health age sex racenew impute_mcareprob_dummy, robust
+mi estimate: ologit impute_dvint impute_earnings impute_health age sex racenew i.age_65_dummy2, robust 
 
 misstable summarize
 
@@ -727,7 +672,9 @@ tabulate impute_mcareprob_dummy
 //maginal effect
 
 tabulate impute_dvint
-eststo ologit_dvint
+
+
+
 
 
 
@@ -740,6 +687,8 @@ ologit dvint earnings
 
 
 ssc install mimrgns
+
+mimrgns, dydx(impute_earnings) atmeans
 //
 mimrgns, dydx(impute_earnings) atmeans predict(outcome(100))
 mimrgns, dydx(impute_earnings) atmeans predict(outcome(203))
@@ -767,7 +716,7 @@ program drop emargins
 program emargins, eclass properties(mi)
   version 15
   args outcome
-  ologit impute_dvint impute_earnings impute_health age sex racenew if age < 65
+  ologit impute_dvint impute_earnings impute_health age sex racenew
   margins, dydx(impute_earnings) at(sex=(1 2))atmeans asbalanced ///
     post predict(outcome(`outcome'))
 end
@@ -782,7 +731,7 @@ foreach outcome in 100 203 204 302 305 400 {
     mat V = e(V_mi)  // Save the variance-covariance matrix from MI
 
     * Now, run the ologit model for _mi_m==0 (non-missing data) to compute margins
-    quietly ologit impute_dvint impute_earnings impute_health age sex racenew if age < 65 if _mi_m == 0
+    quietly ologit impute_dvint impute_earnings impute_health age sex racenew if _mi_m == 0
     quietly margins,dydx(impute_earnings) at(sex=(1 2)) atmeans asbalanced predict(outcome(`outcome'))
 
     * Store the results for the margins command
@@ -795,7 +744,6 @@ foreach outcome in 100 203 204 302 305 400 {
     * Now generate the plot
     marginsplot, x(sex) recast(line) noci name(ologit`outcome', replace)
 }
-
 
 marginsplot
  
@@ -830,18 +778,13 @@ cmp setup
 
 //fixed effect
 
-ologit impute_dvint impute_earnings impute_health age sex racenew i.year if age < 65
+ologit impute_dvint impute_earnings impute_health age sex racenew i.year 
+
+
 //conditional mixed process (cmp)
 
-log using "cmp_earnings_final.txt", replace text
+cmp(impute_earnings = impute_himedicaidyr i.year impute_health age sex racenew)(impute_dvint  = impute_earnings impute_health age sex racenew i.year) if age ,ind ($cmp_mprobit $cmp_oprobit)
 
-cmp(impute_earnings = impute_himedicaidyr i.year impute_health age sex racenew)(impute_dvint  = impute_earnings impute_health age sex racenew i.year) if age<65,ind ($cmp_mprobit $cmp_oprobit) qui
-margins, dydx(impute_earnings) predict(equation(impute_dvint) pr) force
-
-
-log close
-
-ologit impute_dvint impute_earnings impute_health age sex racenew if age < 65
 //////
 
 
@@ -857,7 +800,7 @@ ologit impute_dvint impute_earnings impute_health age sex racenew if age < 65
 // estimates both equations simultaneously. You can use biprobit or mvprobit commands in
 // Stata. the sfirst method is perfered
 
-ologit impute_dvint impute_wormedbill impute_health age sex racenew i.year if age < 65
+ologit impute_dvint impute_wormedbill impute_health age sex racenew i.year 
 
 cmp(impute_wormedbill = impute_himedicaidyr i.year impute_health age sex racenew) ///
     (impute_dvint = impute_wormedbill impute_health age sex racenew i.year), ///
