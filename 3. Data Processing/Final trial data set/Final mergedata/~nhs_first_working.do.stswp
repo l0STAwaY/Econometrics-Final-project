@@ -831,11 +831,15 @@ cmp setup
 //fixed effect
 
 ologit impute_dvint impute_earnings impute_health age sex racenew i.year if age < 65
-
-
 //conditional mixed process (cmp)
 
-cmp(impute_earnings = impute_himedicaidyr i.year impute_health age sex racenew)(impute_dvint  = impute_earnings impute_health age sex racenew i.year) ,ind ($cmp_mprobit $cmp_oprobit)
+log using "cmp_earnings_final.txt", replace text
+
+cmp(impute_earnings = impute_himedicaidyr i.year impute_health age sex racenew)(impute_dvint  = impute_earnings impute_health age sex racenew i.year) if age<65,ind ($cmp_mprobit $cmp_oprobit) qui
+margins, dydx(impute_earnings) predict(equation(impute_dvint) pr) force
+
+
+log close
 
 ologit impute_dvint impute_earnings impute_health age sex racenew if age < 65
 //////

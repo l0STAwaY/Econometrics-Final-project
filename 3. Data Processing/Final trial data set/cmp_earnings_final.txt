@@ -1,0 +1,368 @@
+
+Fitting individual models as starting point for full model fit.
+Note: For programming reasons, these initial estimates may deviate from your specification.
+      For exact fits of each equation alone, run cmp separately on each.
+
+Iteration 0:  Log likelihood = -2292.3507  
+Iteration 1:  Log likelihood = -2292.3507  
+
+Probit regression                                       Number of obs =  8,651
+                                                        LR chi2(0)    =   0.00
+                                                        Prob > chi2   =      .
+Log likelihood = -2292.3507                             Pseudo R2     = 0.0000
+
+------------------------------------------------------------------------------
+  _mp_cmp_y1 | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       _cons |  -1.443483   .0200505   -71.99   0.000    -1.482781   -1.404184
+------------------------------------------------------------------------------
+
+Iteration 0:  Log likelihood = -2408.9952  
+Iteration 1:  Log likelihood = -2350.7829  
+Iteration 2:  Log likelihood = -2350.2842  
+Iteration 3:  Log likelihood = -2350.2841  
+
+Probit regression                                       Number of obs =  8,651
+                                                        LR chi2(7)    = 117.42
+                                                        Prob > chi2   = 0.0000
+Log likelihood = -2350.2841                             Pseudo R2     = 0.0244
+
+-------------------------------------------------------------------------------------
+         _mp_cmp_y2 | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+--------------------+----------------------------------------------------------------
+impute_himedicaidyr |   .2251204   .0548902     4.10   0.000     .1175376    .3327032
+                    |
+               year |
+              2017  |  -.1224456   .0477926    -2.56   0.010    -.2161173   -.0287739
+              2018  |  -.1164363   .0483731    -2.41   0.016    -.2112458   -.0216268
+                    |
+      impute_health |   .0842103    .020294     4.15   0.000     .0444348    .1239858
+                age |  -.0107797    .001683    -6.40   0.000    -.0140784    -.007481
+                sex |   .1651254   .0402652     4.10   0.000      .086207    .2440439
+            racenew |   .0003548   .0001931     1.84   0.066    -.0000236    .0007331
+              _cons |  -1.450082   .1010488   -14.35   0.000    -1.648134    -1.25203
+-------------------------------------------------------------------------------------
+
+Warning: regressor matrix for _mp_cmp_y2 equation appears ill-conditioned. (Condition number = 48.88722.)
+This might prevent convergence. If it does, and if you have not done so already, you may need to remove nearly
+collinear regressors to achieve convergence. Or you may need to add a nrtolerance(#) or nonrtolerance option to the command line.
+See cmp tips.
+
+Iteration 0:  Log likelihood = -3085.2834  
+Iteration 1:  Log likelihood = -3028.6614  
+Iteration 2:  Log likelihood = -3028.3903  
+Iteration 3:  Log likelihood = -3028.3903  
+
+Probit regression                                       Number of obs =  8,651
+                                                        LR chi2(7)    = 113.79
+                                                        Prob > chi2   = 0.0000
+Log likelihood = -3028.3903                             Pseudo R2     = 0.0184
+
+-------------------------------------------------------------------------------------
+         _mp_cmp_y3 | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+--------------------+----------------------------------------------------------------
+impute_himedicaidyr |   .2304204   .0502036     4.59   0.000     .1320232    .3288176
+                    |
+               year |
+              2017  |  -.0516327   .0426173    -1.21   0.226    -.1351611    .0318957
+              2018  |  -.0996279   .0437106    -2.28   0.023    -.1852992   -.0139566
+                    |
+      impute_health |   .0494666   .0182663     2.71   0.007     .0136653    .0852678
+                age |  -.0061188   .0014882    -4.11   0.000    -.0090357   -.0032019
+                sex |   .2397094   .0360796     6.64   0.000     .1689947    .3104241
+            racenew |   .0002514   .0001773     1.42   0.156    -.0000961     .000599
+              _cons |  -1.461858   .0913851   -16.00   0.000     -1.64097   -1.282746
+-------------------------------------------------------------------------------------
+
+Warning: regressor matrix for _mp_cmp_y3 equation appears ill-conditioned. (Condition number = 48.88722.)
+This might prevent convergence. If it does, and if you have not done so already, you may need to remove nearly
+collinear regressors to achieve convergence. Or you may need to add a nrtolerance(#) or nonrtolerance option to the command line.
+See cmp tips.
+
+Iteration 0:  Log likelihood = -3081.1978  
+Iteration 1:  Log likelihood = -3053.5525  
+Iteration 2:  Log likelihood =  -3053.483  
+Iteration 3:  Log likelihood =  -3053.483  
+
+Probit regression                                       Number of obs =  8,651
+                                                        LR chi2(7)    =  55.43
+                                                        Prob > chi2   = 0.0000
+Log likelihood = -3053.483                              Pseudo R2     = 0.0090
+
+-------------------------------------------------------------------------------------
+         _mp_cmp_y4 | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+--------------------+----------------------------------------------------------------
+impute_himedicaidyr |    .170572   .0513641     3.32   0.001     .0699002    .2712438
+                    |
+               year |
+              2017  |  -.0859955   .0429149    -2.00   0.045    -.1701072   -.0018839
+              2018  |  -.0460278   .0429902    -1.07   0.284     -.130287    .0382315
+                    |
+      impute_health |   .0670928   .0181404     3.70   0.000     .0315382    .1026474
+                age |  -.0025873   .0014787    -1.75   0.080    -.0054855    .0003108
+                sex |   .1423683   .0358957     3.97   0.000      .072014    .2127226
+            racenew |   .0001892    .000178     1.06   0.288    -.0001596     .000538
+              _cons |  -1.476698   .0911488   -16.20   0.000    -1.655347    -1.29805
+-------------------------------------------------------------------------------------
+
+Warning: regressor matrix for _mp_cmp_y4 equation appears ill-conditioned. (Condition number = 48.88722.)
+This might prevent convergence. If it does, and if you have not done so already, you may need to remove nearly
+collinear regressors to achieve convergence. Or you may need to add a nrtolerance(#) or nonrtolerance option to the command line.
+See cmp tips.
+
+Iteration 0:  Log likelihood = -3233.3172  
+Iteration 1:  Log likelihood = -3230.0379  
+Iteration 2:  Log likelihood = -3230.0371  
+Iteration 3:  Log likelihood = -3230.0371  
+
+Probit regression                                       Number of obs =  8,651
+                                                        LR chi2(7)    =   6.56
+                                                        Prob > chi2   = 0.4761
+Log likelihood = -3230.0371                             Pseudo R2     = 0.0010
+
+-------------------------------------------------------------------------------------
+         _mp_cmp_y5 | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+--------------------+----------------------------------------------------------------
+impute_himedicaidyr |   .0203328   .0530186     0.38   0.701    -.0835817    .1242473
+                    |
+               year |
+              2017  |  -.0311751   .0417308    -0.75   0.455     -.112966    .0506159
+              2018  |  -.0275809   .0421426    -0.65   0.513    -.1101789    .0550171
+                    |
+      impute_health |   .0092551   .0179156     0.52   0.605    -.0258589     .044369
+                age |  -.0027273    .001452    -1.88   0.060    -.0055731    .0001185
+                sex |   .0382181   .0351046     1.09   0.276    -.0305855    .1070218
+            racenew |  -.0001489   .0001813    -0.82   0.411    -.0005041    .0002064
+              _cons |  -1.092358   .0880594   -12.40   0.000    -1.264951   -.9197645
+-------------------------------------------------------------------------------------
+
+Warning: regressor matrix for _mp_cmp_y5 equation appears ill-conditioned. (Condition number = 48.88722.)
+This might prevent convergence. If it does, and if you have not done so already, you may need to remove nearly
+collinear regressors to achieve convergence. Or you may need to add a nrtolerance(#) or nonrtolerance option to the command line.
+See cmp tips.
+
+Iteration 0:  Log likelihood =  -4050.328  
+Iteration 1:  Log likelihood = -4038.7791  
+Iteration 2:  Log likelihood = -4038.7688  
+Iteration 3:  Log likelihood = -4038.7688  
+
+Probit regression                                       Number of obs =  8,651
+                                                        LR chi2(7)    =  23.12
+                                                        Prob > chi2   = 0.0016
+Log likelihood = -4038.7688                             Pseudo R2     = 0.0029
+
+-------------------------------------------------------------------------------------
+         _mp_cmp_y6 | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+--------------------+----------------------------------------------------------------
+impute_himedicaidyr |  -.1528571   .0509378    -3.00   0.003    -.2526934   -.0530208
+                    |
+               year |
+              2017  |   .0891576   .0379983     2.35   0.019     .0146824    .1636328
+              2018  |   .0453413   .0386757     1.17   0.241    -.0304618    .1211444
+                    |
+      impute_health |   .0144675   .0164024     0.88   0.378    -.0176807    .0466157
+                age |  -.0019707   .0013255    -1.49   0.137    -.0045687    .0006273
+                sex |  -.0480987    .032019    -1.50   0.133    -.1108547    .0146573
+            racenew |   -.000332   .0001674    -1.98   0.047    -.0006602   -3.91e-06
+              _cons |  -.7869194    .080773    -9.74   0.000    -.9452315   -.6286073
+-------------------------------------------------------------------------------------
+
+Warning: regressor matrix for _mp_cmp_y6 equation appears ill-conditioned. (Condition number = 48.88722.)
+This might prevent convergence. If it does, and if you have not done so already, you may need to remove nearly
+collinear regressors to achieve convergence. Or you may need to add a nrtolerance(#) or nonrtolerance option to the command line.
+See cmp tips.
+
+Iteration 0:  Log likelihood = -3006.8712  
+Iteration 1:  Log likelihood = -2963.2375  
+Iteration 2:  Log likelihood = -2962.7897  
+Iteration 3:  Log likelihood = -2962.7896  
+
+Probit regression                                       Number of obs =  8,651
+                                                        LR chi2(7)    =  88.16
+                                                        Prob > chi2   = 0.0000
+Log likelihood = -2962.7896                             Pseudo R2     = 0.0147
+
+-------------------------------------------------------------------------------------
+         _mp_cmp_y7 | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+--------------------+----------------------------------------------------------------
+impute_himedicaidyr |  -.3725377   .0669804    -5.56   0.000    -.5038168   -.2412586
+                    |
+               year |
+              2017  |   .0783096   .0435469     1.80   0.072    -.0070407    .1636599
+              2018  |   .0727784   .0439146     1.66   0.097    -.0132927    .1588495
+                    |
+      impute_health |  -.0559348   .0188175    -2.97   0.003    -.0928164   -.0190532
+                age |   .0027229   .0015037     1.81   0.070    -.0002244    .0056701
+                sex |  -.1747436   .0367837    -4.75   0.000    -.2468384   -.1026488
+            racenew |   -.000325   .0001939    -1.68   0.094     -.000705    .0000551
+              _cons |  -.9238677   .0926301    -9.97   0.000    -1.105419   -.7423161
+-------------------------------------------------------------------------------------
+
+Warning: regressor matrix for _mp_cmp_y7 equation appears ill-conditioned. (Condition number = 48.88722.)
+This might prevent convergence. If it does, and if you have not done so already, you may need to remove nearly
+collinear regressors to achieve convergence. Or you may need to add a nrtolerance(#) or nonrtolerance option to the command line.
+See cmp tips.
+
+Iteration 0:  Log likelihood = -2192.7558  
+Iteration 1:  Log likelihood = -2124.8407  
+Iteration 2:  Log likelihood = -2123.0406  
+Iteration 3:  Log likelihood = -2123.0375  
+Iteration 4:  Log likelihood = -2123.0375  
+
+Probit regression                                       Number of obs =  8,651
+                                                        LR chi2(7)    = 139.44
+                                                        Prob > chi2   = 0.0000
+Log likelihood = -2123.0375                             Pseudo R2     = 0.0318
+
+-------------------------------------------------------------------------------------
+         _mp_cmp_y8 | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+--------------------+----------------------------------------------------------------
+impute_himedicaidyr |    -.41684   .0864488    -4.82   0.000    -.5862766   -.2474034
+                    |
+               year |
+              2017  |   .0384124   .0511214     0.75   0.452    -.0617837    .1386086
+              2018  |   .1191318   .0501175     2.38   0.017     .0209032    .2173604
+                    |
+      impute_health |  -.0981172   .0220403    -4.45   0.000    -.1413153    -.054919
+                age |   .0114014   .0017333     6.58   0.000     .0080043    .0147986
+                sex |  -.2314087   .0429924    -5.38   0.000    -.3156724   -.1471451
+            racenew |  -.0001538   .0002221    -0.69   0.489    -.0005892    .0002815
+              _cons |  -1.388544   .1076974   -12.89   0.000    -1.599627   -1.177461
+-------------------------------------------------------------------------------------
+
+Warning: regressor matrix for _mp_cmp_y8 equation appears ill-conditioned. (Condition number = 48.88722.)
+This might prevent convergence. If it does, and if you have not done so already, you may need to remove nearly
+collinear regressors to achieve convergence. Or you may need to add a nrtolerance(#) or nonrtolerance option to the command line.
+See cmp tips.
+
+Iteration 0:  Log likelihood = -1484.3903  
+Iteration 1:  Log likelihood =  -1458.022  
+Iteration 2:  Log likelihood = -1457.3334  
+Iteration 3:  Log likelihood = -1457.3325  
+Iteration 4:  Log likelihood = -1457.3325  
+
+Probit regression                                       Number of obs =  8,651
+                                                        LR chi2(7)    =  54.12
+                                                        Prob > chi2   = 0.0000
+Log likelihood = -1457.3325                             Pseudo R2     = 0.0182
+
+-------------------------------------------------------------------------------------
+         _mp_cmp_y9 | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+--------------------+----------------------------------------------------------------
+impute_himedicaidyr |  -.3715811   .1012467    -3.67   0.000     -.570021   -.1731412
+                    |
+               year |
+              2017  |   .0107037   .0595891     0.18   0.857    -.1060887    .1274961
+              2018  |   .0443377   .0591591     0.75   0.454    -.0716119    .1602873
+                    |
+      impute_health |  -.0422042   .0257179    -1.64   0.101    -.0926103    .0082019
+                age |   .0078249   .0020448     3.83   0.000     .0038171    .0118327
+                sex |  -.1698024   .0504416    -3.37   0.001    -.2686661   -.0709388
+            racenew |   -.000289   .0002706    -1.07   0.286    -.0008193    .0002414
+              _cons |  -1.662841   .1262506   -13.17   0.000    -1.910287   -1.415394
+-------------------------------------------------------------------------------------
+
+Warning: regressor matrix for _mp_cmp_y9 equation appears ill-conditioned. (Condition number = 48.88722.)
+This might prevent convergence. If it does, and if you have not done so already, you may need to remove nearly
+collinear regressors to achieve convergence. Or you may need to add a nrtolerance(#) or nonrtolerance option to the command line.
+See cmp tips.
+
+Iteration 0:  Log likelihood = -1096.9896  
+Iteration 1:  Log likelihood = -1064.7101  
+Iteration 2:  Log likelihood = -1062.7702  
+Iteration 3:  Log likelihood = -1062.7571  
+Iteration 4:  Log likelihood = -1062.7571  
+
+Probit regression                                       Number of obs =  8,651
+                                                        LR chi2(7)    =  68.47
+                                                        Prob > chi2   = 0.0000
+Log likelihood = -1062.7571                             Pseudo R2     = 0.0312
+
+-------------------------------------------------------------------------------------
+        _mp_cmp_y10 | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+--------------------+----------------------------------------------------------------
+impute_himedicaidyr |  -.5851187   .1490953    -3.92   0.000    -.8773401   -.2928973
+                    |
+               year |
+              2017  |   .0641675   .0693292     0.93   0.355    -.0717151    .2000502
+              2018  |   .1073582   .0683498     1.57   0.116    -.0266049    .2413212
+                    |
+      impute_health |  -.0496205   .0294993    -1.68   0.093     -.107438     .008197
+                age |   .0083339   .0023422     3.56   0.000     .0037433    .0129246
+                sex |  -.2612451   .0595431    -4.39   0.000    -.3779474   -.1445428
+            racenew |   .0002506   .0002777     0.90   0.367    -.0002937    .0007948
+              _cons |  -1.828937   .1459619   -12.53   0.000    -2.115017   -1.542857
+-------------------------------------------------------------------------------------
+
+Warning: regressor matrix for _mp_cmp_y10 equation appears ill-conditioned. (Condition number = 48.88722.)
+This might prevent convergence. If it does, and if you have not done so already, you may need to remove nearly
+collinear regressors to achieve convergence. Or you may need to add a nrtolerance(#) or nonrtolerance option to the command line.
+See cmp tips.
+
+Iteration 0:  Log likelihood = -2090.4561  
+Iteration 1:  Log likelihood = -1908.8735  
+Iteration 2:  Log likelihood = -1896.7303  
+Iteration 3:  Log likelihood = -1896.5091  
+Iteration 4:  Log likelihood = -1896.5085  
+Iteration 5:  Log likelihood = -1896.5085  
+
+Probit regression                                       Number of obs =  8,651
+                                                        LR chi2(7)    = 387.90
+                                                        Prob > chi2   = 0.0000
+Log likelihood = -1896.5085                             Pseudo R2     = 0.0928
+
+-------------------------------------------------------------------------------------
+        _mp_cmp_y11 | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+--------------------+----------------------------------------------------------------
+impute_himedicaidyr |  -.7266325   .1275441    -5.70   0.000    -.9766143   -.4766508
+                    |
+               year |
+              2017  |   .0659388   .0538295     1.22   0.221     -.039565    .1714427
+              2018  |   .0846954   .0535576     1.58   0.114    -.0202755    .1896664
+                    |
+      impute_health |  -.2174124   .0240836    -9.03   0.000    -.2646155   -.1702093
+                age |   .0247086   .0018616    13.27   0.000     .0210598    .0283574
+                sex |  -.3603603   .0467772    -7.70   0.000    -.4520419   -.2686787
+            racenew |  -.0002271   .0002396    -0.95   0.343    -.0006967    .0002425
+              _cons |  -1.553028    .114442   -13.57   0.000     -1.77733   -1.328726
+-------------------------------------------------------------------------------------
+
+Warning: regressor matrix for _mp_cmp_y11 equation appears ill-conditioned. (Condition number = 48.88722.)
+This might prevent convergence. If it does, and if you have not done so already, you may need to remove nearly
+collinear regressors to achieve convergence. Or you may need to add a nrtolerance(#) or nonrtolerance option to the command line.
+See cmp tips.
+
+Iteration 0:  Log likelihood = -12776.832  
+Iteration 1:  Log likelihood = -12613.099  
+Iteration 2:  Log likelihood = -12613.002  
+Iteration 3:  Log likelihood = -12613.002  
+
+Ordered probit regression                               Number of obs =  8,651
+                                                        LR chi2(7)    = 327.66
+                                                        Prob > chi2   = 0.0000
+Log likelihood = -12613.002                             Pseudo R2     = 0.0128
+
+---------------------------------------------------------------------------------
+       _cmp_y12 | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+----------------+----------------------------------------------------------------
+impute_earnings |  -.0279482   .0045422    -6.15   0.000    -.0368507   -.0190457
+  impute_health |  -.0835193   .0120888    -6.91   0.000    -.1072129   -.0598257
+            age |  -.0000681   .0009775    -0.07   0.944     -.001984    .0018477
+            sex |  -.3899668   .0239115   -16.31   0.000    -.4368324   -.3431012
+        racenew |  -.0000385   .0001189    -0.32   0.746    -.0002714    .0001945
+                |
+           year |
+          2017  |  -.0230795   .0279109    -0.83   0.408    -.0777839    .0316248
+          2018  |  -.0026384   .0281661    -0.09   0.925     -.057843    .0525662
+----------------+----------------------------------------------------------------
+          /cut1 |  -2.802412   .0707161                     -2.941013   -2.663811
+          /cut2 |  -.9107299   .0657105                      -1.03952   -.7819397
+          /cut3 |  -.4489136   .0651804                     -.5766648   -.3211624
+          /cut4 |  -.0336675   .0649524                     -.1609718    .0936369
+          /cut5 |    .501639    .065504                      .3732535    .6300245
+---------------------------------------------------------------------------------
+
+Warning: regressor matrix for _cmp_y12 equation appears ill-conditioned. (Condition number = 64.864477.)
+This might prevent convergence. If it does, and if you have not done so already, you may need to remove nearly
+collinear regressors to achieve convergence. Or you may need to add a nrtolerance(#) or nonrtolerance option to the command line.
+See cmp tips.
