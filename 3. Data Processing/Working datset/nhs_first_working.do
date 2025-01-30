@@ -656,14 +656,66 @@ replace impute_mcareprob_dummy = 1 if age >=65 & impute_mcareprob == 2
 
 
 
-// slowly including more variable
+gen age_dummy = 0 
+replace age_dummy = 1 if age < 65
+
+
+eststo clear
+
 mi estimate: ologit impute_dvint impute_earnings, robust
+est store model1
+
+
 mi estimate: ologit impute_dvint impute_earnings impute_health, robust
+est store model2
+
+mi estimate: ologit impute_dvint impute_earnings impute_health i.impute_earnings#i.impute_health, robust
+est store model7
+
 mi estimate: ologit impute_dvint impute_earnings impute_health age, robust
+est store model3
+
+
 mi estimate: ologit impute_dvint impute_earnings impute_health age sex, robust
+est store model4
+
+
 mi estimate: ologit impute_dvint impute_earnings impute_health age sex racenew, robust
-mi estimate: ologit impute_dvint impute_earnings impute_health age sex racenew impute_mcareprob_dummy, robust
-mi estimate: ologit impute_dvint impute_earnings impute_health age sex racenew i.age_65_dummy2, robust 
+est store model5
+
+mi estimate: ologit impute_dvint impute_earnings impute_health age sex impute_mcareprob racenew age_dummy impute_mcareprob_dummy, robust
+est store model6 
+
+
+eststo clear
+
+
+* First model with condition age < 65 new prf
+mi estimate: ologit impute_dvint impute_earnings if age < 65, robust
+est store model1
+
+
+mi estimate: ologit impute_dvint impute_earnings impute_health if age < 65, robust
+est store model2
+
+
+mi estimate: ologit impute_dvint impute_earnings impute_health age if age < 65, robust
+est store model3
+
+
+mi estimate: ologit impute_dvint impute_earnings impute_health age sex if age < 65, robust
+est store model4
+
+
+mi estimate: ologit impute_dvint impute_earnings impute_health age sex racenew if age < 65, robust
+est store model5
+
+
+
+
+esttab 
+
+
 
 misstable summarize
 
@@ -672,7 +724,9 @@ tabulate impute_mcareprob_dummy
 //maginal effect
 
 tabulate impute_dvint
-eststo ologit_dvint
+
+
+
 
 
 
@@ -685,6 +739,8 @@ ologit dvint earnings
 
 
 ssc install mimrgns
+
+
 
 mimrgns, dydx(impute_earnings) atmeans
 //
@@ -714,7 +770,7 @@ program drop emargins
 program emargins, eclass properties(mi)
   version 15
   args outcome
-  ologit impute_dvint impute_earnings impute_health age sex racenew
+  ologit impute_dvint impute_earnings impute_health age sex racenew if age < 65
   margins, dydx(impute_earnings) at(sex=(1 2))atmeans asbalanced ///
     post predict(outcome(`outcome'))
 end
@@ -729,7 +785,7 @@ foreach outcome in 100 203 204 302 305 400 {
     mat V = e(V_mi)  // Save the variance-covariance matrix from MI
 
     * Now, run the ologit model for _mi_m==0 (non-missing data) to compute margins
-    quietly ologit impute_dvint impute_earnings impute_health age sex racenew if _mi_m == 0
+    quietly ologit impute_dvint impute_earnings impute_health age sex racenew if age < 65 & _mi_m == 0
     quietly margins,dydx(impute_earnings) at(sex=(1 2)) atmeans asbalanced predict(outcome(`outcome'))
 
     * Store the results for the margins command
@@ -753,7 +809,7 @@ marginsplot
 use "/Users/apple/Documents/GitHub/Econometrics-Final-project/3. Data Processing/Working datset/nhis_fully_imputated_extract.dta"   
 
 
-
+describe
 mi extract 1
 
 // make sure we are working with imputated data this should be 0 we are good
@@ -781,9 +837,17 @@ ologit impute_dvint impute_earnings impute_health age sex racenew i.year
 
 //conditional mixed process (cmp)
 
-cmp(impute_earnings = impute_himedicaidyr i.year impute_health age sex racenew)(impute_dvint  = impute_earnings impute_health age sex racenew i.year) ,ind ($cmp_mprobit $cmp_oprobit)
 
-//////
+
+cmp(impute_earnings = impute_himedicaidyr i.year impute_health age sex racenew)(impute_dvint  = impute_earnings impute_health age sex racenew i.year) if age < 65 ,ind ($cmp_mprobit $cmp_oprobit) qui
+margins, dydx(*) predict(equation(impute_dvint) pr) force 
+
+// the cmp is taking too long around 4 hour still no results so we used 2sls insteaed
+
+regress impute_earnings impute_himedicaidyr i.year impute_health age sex racenew
+predict ft_xb, xb
+ologit impute_dvint ft_xb impute_health age sex racenew i.year
+
 
 
 //------------------model for impute_wormedbill--------------//
@@ -801,92 +865,24 @@ cmp(impute_earnings = impute_himedicaidyr i.year impute_health age sex racenew)(
 ologit impute_dvint impute_wormedbill impute_health age sex racenew i.year 
 
 cmp(impute_wormedbill = impute_himedicaidyr i.year impute_health age sex racenew) ///
-    (impute_dvint = impute_wormedbill impute_health age sex racenew i.year), ///
+    (impute_dvint = impute_wormedbill impute_health age sex racenew i.year) if age < 65, ///
     ind($cmp_mprobit $cmp_oprobit)
 
+// the cmp is taking too long around 4 hour still no results so we used 2sls insteaed
+regress impute_wormedbill impute_himedicaidyr i.year impute_health age sex racenew
+predict fw_xb, xb
+ologit impute_dvint fw_xb impute_health age sex racenew i.year
+
+tabulate sex
+
+
+regress impute_earnings impute_himedicaidyr i.year impute_health age sex racenew
+predict ft_xb, xb
+ologit impute_dvint ft_xb impute_health age sex racenew i.year
 
 
 
 
 
 
-
-
-
-
-
-
-//---------------------------------------Unrealated
-
-
-
-
-//A likelihood ratio test will therefore tell you whether simplification from multinomial logit to ordered logit is justified, how ever mi is not based on 
-
-// An LR test can compare a Logit (binary outcome) model and an Mlogit (multinomial outcome) model because both use maximum likelihood estimation. The test evaluates whether the increased complexity of the Mlogit model, with more categories, significantly improves the fit over the simpler Logit model, thereby assessing if the added complexity is justified by the data.
-//https://www.statalist.org/forums/forum/general-stata-discussion/general/1653984-ordinal-or-multinomial-regression
-
-
-
-
-*-----------------------------
-
-*General remark 
-
-* What we can do is to limit time from 2016-2018 pre covid
-
-* Complication for missing data
-
-* Attempt at data imputation/ there is a big issue the entirety of missing data exist in 2019, if imputated it, we are essentially using knn to predict the data and it won't give us much information, consider simply dropping them.
-
-* hospnght has no missing data but should we count unknown case as missing data or somthing else, and should we treat the unknown refused, not certainor don't know differently
-* The same issue apply to variables like eryrno, usualpl   essentually any variable that has this choice
-
-*-----------------------------
-*  For similar variable ,sum, average, first principal component of the two (or more) series. How do we justify a given choice
-*  Interval since last doctor visit/  was in a hospital overnight in past 12 months/  received home care from health professional, past 12 months
-
-
-
-
-
-* Medical care delayed due to cost, past 12 months/ needed but couldn't afford medical care, past 12 months /  needed but couldn't afford prescription medicines, past 12 months /  worried about paying medical bills/  delayed filling prescription to save money, past 12 months/  took less medication to save money, past 12 months/  skipped medication doses to save money, past 12 months/  problems paying or unable to pay medical bills, past 12 months/  unable to pay medical bills
-
-
-* The concern is this If variables x1 and x2 represent two distinct methods for measuring the same attribute, merging them can offer a more precise representation of the attribute you're trying to measure. For example, to create a variable indicating body size, you could combine x1 = height and x2 = weight, either by adding them together (x1 + x2) or by performing a principal components analysis and selecting the first principal component.
-
-*-----------------------------
-
-* Having children may effect health care usage as well
-
-
-*-----------------------------
-
-* Other data we should include 	Health status/. why? we may be able to calculate short term QALY
-
-* What about a cost utility example.  does cost/utility effect the utilization of health care?  We don't have life expectancy we could devide this by the years of obervation to get average health of a individua across year, then we might be able use a dummy varaible to simulate treatment or not or utilization or not.  Another question arise, is three years of observation enoough to make meaningful conclusion?
-
-*-----------------------------
-
-
-* Remember its invalid to simply to drop these varaibles as there may be missing data bias.  Drop? / Imputation?
-* Perhaps we need to understand, are the missing data missing datas MAR/MCAR/MANR
-*Should we use dummy variables as adjustments? The missing-indicator method is a popular and simple method to handle missing data in clinical research but has been criticized for introducing bias.   But we would know that the variability of x would be reduce since usually we replace missing x value with somthing like the mean or regression estimate
-
-
-
-
-
-
-
-* Does affordability in healthcare and vist mean the same thing?  Can you visit but can't afford?  
-* Define population regression function    :     interval since last doctor visit=
-
-
-
-
-
-
-
-//    wormedbill 
 
